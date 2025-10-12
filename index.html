@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURBO TEMP MAIL - EARNING BY HABIB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00C853;
+            --secondary: #1B5E20;
+            --accent: #FFD600;
+            --dark: #121212;
+            --light: #FFFFFF;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --border-radius: 8px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: left;
+            padding: 20px;
+        }
+
+        .header-container {
+            width: 100%;
+            max-width: 1080px;
+            height: 299px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
+            transition: all 0.5s;
+            border: 2px solid transparent;
+            animation: borderGlow 8s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { border-color: rgba(255, 0, 0, 0.2); }
+            14% { border-color: rgba(255, 115, 0, 0.2); }
+            28% { border-color: rgba(255, 251, 0, 0.2); }
+            42% { border-color: rgba(72, 255, 0, 0.2); }
+            56% { border-color: rgba(0, 255, 213, 0.2); }
+            70% { border-color: rgba(0, 43, 255, 0.2); }
+            84% { border-color: rgba(122, 0, 255, 0.2); }
+            100% { border-color: rgba(255, 0, 200, 0.2); }
+        }
+
+        .header-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(255,215,0,0.8);
+        }
+
+        .header-text {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--light);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            position: relative;
+            display: inline-block;
+            padding: 0 10px;
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid var(--accent);
+            border-radius: 5px;
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        .subtitle-text {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: cardBorderGlow 12s linear infinite;
+        }
+
+        @keyframes cardBorderGlow {
+            0% { box-shadow: var(--shadow), 0 0 10px rgba(255, 0, 0, 0.1); }
+            14% { box-shadow: var(--shadow), 0 0 10px rgba(255, 115, 0, 0.1); }
+            28% { box-shadow: var(--shadow), 0 0 10px rgba(255, 251, 0, 0.1); }
+            42% { box-shadow: var(--shadow), 0 0 10px rgba(72, 255, 0, 0.1); }
+            56% { box-shadow: var(--shadow), 0 0 10px rgba(0, 255, 213, 0.1); }
+            70% { box-shadow: var(--shadow), 0 0 10px rgba(0, 43, 255, 0.1); }
+            84% { box-shadow: var(--shadow), 0 0 10px rgba(122, 0, 255, 0.1); }
+            100% { box-shadow: var(--shadow), 0 0 10px rgba(255, 0, 200, 0.1); }
+        }
+
+        .email-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            word-break: break-all;
+            text-align: center;
+            animation: emailBorderGlow 16s linear infinite;
+        }
+
+        @keyframes emailBorderGlow {
+            0% { border-color: rgba(255, 0, 0, 0.1); }
+            14% { border-color: rgba(255, 115, 0, 0.1); }
+            28% { border-color: rgba(255, 251, 0, 0.1); }
+            42% { border-color: rgba(72, 255, 0, 0.1); }
+            56% { border-color: rgba(0, 255, 213, 0.1); }
+            70% { border-color: rgba(0, 43, 255, 0.1); }
+            84% { border-color: rgba(122, 0, 255, 0.1); }
+            100% { border-color: rgba(255, 0, 200, 0.1); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            background: var(--accent);
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(255,214,0,0.5);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(255,214,0,0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: var(--light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .inbox {
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: inboxBorderGlow 20s linear infinite;
+        }
+
+        @keyframes inboxBorderGlow {
+            0% { border-color: rgba(255, 0, 0, 0.1); }
+            14% { border-color: rgba(255, 115, 0, 0.1); }
+            28% { border-color: rgba(255, 251, 0, 0.1); }
+            42% { border-color: rgba(72, 255, 0, 0.1); }
+            56% { border-color: rgba(0, 255, 213, 0.1); }
+            70% { border-color: rgba(0, 43, 255, 0.1); }
+            84% { border-color: rgba(122, 0, 255, 0.1); }
+            100% { border-color: rgba(255, 0, 200, 0.1); }
+        }
+
+        .email-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid var(--accent);
+        }
+
+        .email-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .email-subject {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: videoBorderGlow 24s linear infinite;
+        }
+
+        @keyframes videoBorderGlow {
+            0% { border-color: rgba(255, 0, 0, 0.1); }
+            14% { border-color: rgba(255, 115, 0, 0.1); }
+            28% { border-color: rgba(255, 251, 0, 0.1); }
+            42% { border-color: rgba(72, 255, 0, 0.1); }
+            56% { border-color: rgba(0, 255, 213, 0.1); }
+            70% { border-color: rgba(0, 43, 255, 0.1); }
+            84% { border-color: rgba(122, 0, 255, 0.1); }
+            100% { border-color: rgba(255, 0, 200, 0.1); }
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 340px;
+            border: none;
+            border-radius: var(--border-radius);
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 2rem;
+            }
+            
+            .header-container {
+                height: auto;
+                aspect-ratio: 1080/299;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+            }
+
+            .video-container iframe {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+	<script type='text/javascript' src='//pl27278657.profitableratecpm.com/1a/c5/7d/1ac57da8a82142ad962f0afc4ca8f086.js'></script>
+    <!-- Header Image with Clickable Link -->
+    <div class="header-container">
+        <a href="https://earningbyhabib.github.io/Tempmail/Note.html" target="_blank">
+            <img src="https://i.postimg.cc/3NwZKsd9/Screenshot-20251012-115752.jpg" alt="EARNING BY HABIB" class="header-image">
+        </a>
+    </div>
+
+    <!-- Text Below Image -->
+    <div class="header-text">
+        <div class="logo-text">EBH_EMAIL</div>
+        <div class="subtitle-text">Welcome to Earning By Habib </div>
+    </div>
+    <script type="text/javascript">
+	atOptions = {
+		'key' : 'c3ef9a757b7897fe421c93374d061946',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/c3ef9a757b7897fe421c93374d061946/invoke.js"></script>
+
+    <!-- Main Content -->
+    <div class="card">
+        <div class="email-display" id="emailDisplay">Loading...</div>
+        
+        <div class="button-group">
+            <button class="btn" id="copyBtn">Copy</button>
+            <button class="btn btn-secondary" id="newBtn">Change Email</button>
+            <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+        </div>
+        
+        <div class="timer-display" id="timerDisplay">Auto refresh in 10 seconds</div>
+
+        <div class="inbox" id="inbox">
+            <div style="text-align: center; padding: 20px;">
+                <div class="loading"></div> Loading emails...
+            </div>
+        </div>
+    </div>
+
+<!-- YouTube Video Container -->
+<div class="video-container">
+    <iframe id="youtubePlayer" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+</div>
+
+<script>
+    // এখানে শুধু ভিডিও আইডি দিন (পুরো URL নয়)
+    const youtubeVideoId = 'UgEWczNeP4M';
+    
+    // সঠিক এম্বেড URL সেট করা হচ্ছে
+    document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${youtubeVideoId}`;
+</script>
+
+    <script>
+        // Mail.tm API Configuration
+        const MAIL_TM_API = {
+            baseUrl: "https://api.mail.tm",
+            password: "12345678" // Default password for all accounts
+        };
+
+        let currentEmail = null;
+        let authToken = null;
+        let refreshInterval = null;
+        let timerCount = 10;
+
+        // DOM Elements
+        const emailDisplay = document.getElementById('emailDisplay');
+        const inbox = document.getElementById('inbox');
+        const copyBtn = document.getElementById('copyBtn');
+        const newBtn = document.getElementById('newBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        // Generate Random Email with Mail.tm domain
+        async function generateRandomEmail() {
+            try {
+                // First get available domain from Mail.tm
+                const domainsResponse = await fetch(`${MAIL_TM_API.baseUrl}/domains`);
+                const domainsData = await domainsResponse.json();
+                const domain = domainsData["hydra:member"][0].domain;
+                
+                const randomString = Math.random().toString(36).substring(2, 10);
+                return `${randomString}@${domain}`;
+            } catch (error) {
+                console.error("Error getting domain:", error);
+                return `${Math.random().toString(36).substring(2, 10)}@mail.tm`; // fallback
+            }
+        }
+
+        // Create Email Account on Mail.tm
+        async function createEmailAccount(email) {
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/accounts`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        address: email,
+                        password: MAIL_TM_API.password
+                    })
+                });
+                
+                return await response.json();
+            } catch (error) {
+                console.error("Error creating account:", error);
+                return null;
+            }
+        }
+
+        // Login to Mail.tm account
+        async function loginToAccount(email) {
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/token`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        address: email,
+                        password: MAIL_TM_API.password
+                    })
+                });
+                
+                const data = await response.json();
+                return data.token;
+            } catch (error) {
+                console.error("Error logging in:", error);
+                return null;
+            }
+        }
+
+        // Get Messages from Mail.tm
+        async function getMessages() {
+            if (!authToken) return [];
+            
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages`, {
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data["hydra:member"] || [];
+            } catch (error) {
+                console.error("Error getting messages:", error);
+                return [];
+            }
+        }
+
+        // Get Single Message Content
+        async function getMessageContent(messageId) {
+            if (!authToken) return null;
+            
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages/${messageId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error getting message content:", error);
+                return null;
+            }
+        }
+
+        // Render Emails
+        function renderEmails(emails) {
+            inbox.innerHTML = '';
+            
+            if (!emails || emails.length === 0) {
+                inbox.innerHTML = '<div style="text-align: center; padding: 20px;">No emails yet</div>';
+                return;
+            }
+            
+            emails.forEach(email => {
+                const emailEl = document.createElement('div');
+                emailEl.className = 'email-item';
+                
+                emailEl.innerHTML = `
+                    <div class="email-subject">${email.subject || 'No Subject'}</div>
+                    <div>From: ${email.from?.address || 'Unknown'}</div>
+                    <div>${email.intro ? email.intro.substring(0, 100) + '...' : 'No preview'}</div>
+                    <div style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">
+                        ${new Date(email.createdAt).toLocaleTimeString()}
+                    </div>
+                `;
+                
+                emailEl.addEventListener('click', () => viewEmail(email));
+                inbox.appendChild(emailEl);
+            });
+        }
+
+        // View Email
+        async function viewEmail(email) {
+            // Get full message content
+            const fullMessage = await getMessageContent(email.id);
+            
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'var(--dark)';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = 'var(--border-radius)';
+            modalContent.style.maxWidth = '80%';
+            modalContent.style.maxHeight = '80%';
+            modalContent.style.overflow = 'auto';
+            modalContent.style.position = 'relative';
+            modalContent.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+            
+            modalContent.innerHTML = `
+                <h3 style="color: var(--accent); margin-bottom: 10px; margin-top: 15px;">${email.subject || 'No Subject'}</h3>
+                <p><strong>From:</strong> ${email.from?.address || 'Unknown'}</p>
+                <p><strong>To:</strong> ${currentEmail}</p>
+                <p><strong>Date:</strong> ${new Date(email.createdAt).toLocaleString()}</p>
+                <div style="margin-top: 20px; white-space: pre-wrap;">${fullMessage?.text || fullMessage?.html || 'No content'}</div>
+                <button id="closeModal" style="margin-top: 20px; padding: 8px 16px; background: var(--accent); color: var(--dark); border: none; border-radius: 4px; cursor: pointer;">Close</button>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        // Check Inbox
+        async function checkInbox() {
+            if (!currentEmail || !authToken) return;
+
+            try {
+                refreshBtn.innerHTML = '<div class="loading"></div> Loading';
+                
+                const emails = await getMessages();
+                refreshBtn.textContent = 'Refresh';
+                renderEmails(emails);
+                
+            } catch (error) {
+                console.error("Error checking inbox:", error);
+                inbox.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--accent);">
+                        Could not load emails. Try refreshing.
+                    </div>
+                `;
+                refreshBtn.textContent = 'Refresh';
+            }
+        }
+
+        // Update Timer Display
+        function updateTimer() {
+            timerCount--;
+            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
+            
+            if (timerCount <= 0) {
+                timerCount = 10;
+                checkInbox();
+            }
+        }
+
+        // Generate New Email
+        async function generateEmail() {
+            try {
+                inbox.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="loading"></div> Generating email...</div>';
+                
+                // Generate random email with mail.tm domain
+                currentEmail = await generateRandomEmail();
+                emailDisplay.textContent = currentEmail;
+                
+                // Create account on mail.tm
+                await createEmailAccount(currentEmail);
+                
+                // Login to get auth token
+                authToken = await loginToAccount(currentEmail);
+                
+                // Save to localStorage
+                localStorage.setItem('currentEmail', currentEmail);
+                localStorage.setItem('authToken', authToken);
+                
+                // Check inbox
+                await checkInbox();
+                
+            } catch (error) {
+                console.error("Error generating email:", error);
+                inbox.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--accent);">Please try again later</div>';
+            }
+        }
+
+        // Load saved email from localStorage
+        async function loadSavedEmail() {
+            const savedEmail = localStorage.getItem('currentEmail');
+            const savedToken = localStorage.getItem('authToken');
+            
+            if (savedEmail && savedToken) {
+                currentEmail = savedEmail;
+                authToken = savedToken;
+                emailDisplay.textContent = currentEmail;
+                await checkInbox();
+            } else {
+                await generateEmail();
+            }
+        }
+
+        // Copy Email
+        copyBtn.addEventListener('click', async () => {
+            if (!currentEmail) return;
+            
+            try {
+                await navigator.clipboard.writeText(currentEmail);
+                
+                // Create a temporary "Copied!" notification
+                const notification = document.createElement('div');
+                notification.textContent = 'Copied!';
+                notification.style.position = 'fixed';
+                notification.style.bottom = '20px';
+                notification.style.left = '50%';
+                notification.style.transform = 'translateX(-50%)';
+                notification.style.backgroundColor = 'var(--accent)';
+                notification.style.color = 'var(--dark)';
+                notification.style.padding = '10px 20px';
+                notification.style.borderRadius = '50px';
+                notification.style.zIndex = '1000';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.animation = 'fadeInOut 2s ease-in-out';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for browsers that don't support clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = currentEmail;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show notification anyway
+                const notification = document.createElement('div');
+                notification.textContent = 'Copied!';
+                notification.style.position = 'fixed';
+                notification.style.bottom = '20px';
+                notification.style.left = '50%';
+                notification.style.transform = 'translateX(-50%)';
+                notification.style.backgroundColor = 'var(--accent)';
+                notification.style.color = 'var(--dark)';
+                notification.style.padding = '10px 20px';
+                notification.style.borderRadius = '50px';
+                notification.style.zIndex = '1000';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.animation = 'fadeInOut 2s ease-in-out';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 2000);
+            }
+        });
+
+        // Add button animation on click
+        function animateButton(button) {
+            button.style.transform = 'translateY(-5px) scale(1.05)';
+            setTimeout(() => {
+                button.style.transform = 'translateY(-3px)';
+                setTimeout(() => {
+                    button.style.transform = 'translateY(0)';
+                }, 100);
+            }, 100);
+        }
+
+        // Event Listeners with animations
+        newBtn.addEventListener('click', () => {
+            animateButton(newBtn);
+            clearInterval(refreshInterval);
+            // Clear saved data
+            localStorage.removeItem('currentEmail');
+            localStorage.removeItem('authToken');
+            generateEmail();
+            refreshInterval = setInterval(updateTimer, 1000);
+        });
+        
+        refreshBtn.addEventListener('click', () => {
+            animateButton(refreshBtn);
+            checkInbox();
+            timerCount = 10; // Reset timer
+            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
+        });
+
+        copyBtn.addEventListener('click', () => {
+            animateButton(copyBtn);
+        });
+
+        // Initialize
+        loadSavedEmail();
+        refreshInterval = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
