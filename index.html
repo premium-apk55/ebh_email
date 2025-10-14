@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TURBO TEMP MAIL - EARNING BY HABIB</title>
+    <title>TURBO TEMP MAIL - OTP EXTRACTOR</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -198,46 +198,88 @@
             background: rgba(255,255,255,0.3);
         }
 
-        .inbox {
+        .otp-section {
+            margin-bottom: 25px;
+        }
+
+        .otp-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .otp-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .compact-otp-box {
             background: rgba(0,0,0,0.3);
             border-radius: var(--border-radius);
             padding: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: inboxBorderGlow 20s linear infinite;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: otpBorderGlow 20s linear infinite;
+            min-height: 120px;
         }
 
-        @keyframes inboxBorderGlow {
-            0% { border-color: rgba(255, 0, 0, 0.1); }
-            14% { border-color: rgba(255, 115, 0, 0.1); }
-            28% { border-color: rgba(255, 251, 0, 0.1); }
-            42% { border-color: rgba(72, 255, 0, 0.1); }
-            56% { border-color: rgba(0, 255, 213, 0.1); }
-            70% { border-color: rgba(0, 43, 255, 0.1); }
-            84% { border-color: rgba(122, 0, 255, 0.1); }
-            100% { border-color: rgba(255, 0, 200, 0.1); }
+        @keyframes otpBorderGlow {
+            0% { border-color: rgba(255, 0, 0, 0.2); }
+            14% { border-color: rgba(255, 115, 0, 0.2); }
+            28% { border-color: rgba(255, 251, 0, 0.2); }
+            42% { border-color: rgba(72, 255, 0, 0.2); }
+            56% { border-color: rgba(0, 255, 213, 0.2); }
+            70% { border-color: rgba(0, 43, 255, 0.2); }
+            84% { border-color: rgba(122, 0, 255, 0.2); }
+            100% { border-color: rgba(255, 0, 200, 0.2); }
         }
 
-        .email-item {
-            background: rgba(255,255,255,0.1);
-            border-radius: var(--border-radius);
-            padding: 15px;
+        .otp-code {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
             margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .otp-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .otp-copy-btn {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 3px solid var(--accent);
-        }
-
-        .email-item:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-
-        .email-subject {
             font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 5px;
+            min-width: 120px;
+        }
+
+        .otp-copy-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,200,83,0.4);
+        }
+
+        .empty-otp-box {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
         }
 
         .loading {
@@ -313,6 +355,16 @@
             .video-container iframe {
                 height: 200px;
             }
+            
+            .otp-code {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+            
+            .compact-otp-box {
+                min-height: 100px;
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -327,7 +379,7 @@
     <!-- Text Below Image -->
     <div class="header-text">
         <div class="logo-text">EBH_EMAIL</div>
-        <div class="subtitle-text">Welcome to Earning By Habib</div>
+        <div class="subtitle-text">Welcome to Earning by Habib </div>
     </div>
 
     <!-- Main Content -->
@@ -335,16 +387,22 @@
         <div class="email-display" id="emailDisplay">Loading...</div>
         
         <div class="button-group">
-            <button class="btn" id="copyBtn">Copy</button>
+            <button class="btn" id="copyBtn">Copy Email</button>
             <button class="btn btn-secondary" id="newBtn">Change Email</button>
             <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
         </div>
         
         <div class="timer-display" id="timerDisplay">Auto refresh in 10 seconds</div>
 
-        <div class="inbox" id="inbox">
-            <div style="text-align: center; padding: 20px;">
-                <div class="loading"></div> Loading emails...
+        <!-- OTP Section - Compact OTP Box -->
+        <div class="otp-section">
+            <div class="otp-title">Latest OTP Code</div>
+            <div class="otp-container" id="otpContainer">
+                <div class="compact-otp-box">
+                    <div class="empty-otp-box">
+                        <div class="loading"></div> Waiting for OTP...
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -370,14 +428,15 @@
         let authToken = null;
         let refreshInterval = null;
         let timerCount = 10;
+        let latestOTP = null;
 
         // DOM Elements
         const emailDisplay = document.getElementById('emailDisplay');
-        const inbox = document.getElementById('inbox');
         const copyBtn = document.getElementById('copyBtn');
         const newBtn = document.getElementById('newBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const timerDisplay = document.getElementById('timerDisplay');
+        const otpContainer = document.getElementById('otpContainer');
 
         // Generate Random Email with Mail.tm domain
         async function generateRandomEmail() {
@@ -472,78 +531,62 @@
             }
         }
 
-        // Render Emails
-        function renderEmails(emails) {
-            inbox.innerHTML = '';
+        // Extract OTP from email content
+        function extractOTP(content) {
+            // Common OTP patterns - focusing on 6-digit codes which are most common
+            const otpPatterns = [
+                /\b\d{6}\b/g, // 6-digit OTP (most common)
+                /verification code:?\s*(\d{6})/i,
+                /OTP:?\s*(\d{6})/i,
+                /code:?\s*(\d{6})/i,
+                /one-time password:?\s*(\d{6})/i,
+                /one time password:?\s*(\d{6})/i
+            ];
             
-            if (!emails || emails.length === 0) {
-                inbox.innerHTML = '<div style="text-align: center; padding: 20px;">No emails yet</div>';
+            for (const pattern of otpPatterns) {
+                const matches = content.match(pattern);
+                if (matches) {
+                    for (const match of matches) {
+                        // Extract just the digits
+                        const digitMatch = match.match(/\d{6}/);
+                        if (digitMatch) {
+                            return digitMatch[0];
+                        }
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        // Update OTP Display
+        function updateOTPDisplay() {
+            if (!latestOTP) {
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box">
+                            <div class="loading"></div> Waiting for OTP...
+                        </div>
+                    </div>
+                `;
                 return;
             }
             
-            emails.forEach(email => {
-                const emailEl = document.createElement('div');
-                emailEl.className = 'email-item';
-                
-                emailEl.innerHTML = `
-                    <div class="email-subject">${email.subject || 'No Subject'}</div>
-                    <div>From: ${email.from?.address || 'Unknown'}</div>
-                    <div>${email.intro ? email.intro.substring(0, 100) + '...' : 'No preview'}</div>
-                    <div style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">
-                        ${new Date(email.createdAt).toLocaleTimeString()}
-                    </div>
-                `;
-                
-                emailEl.addEventListener('click', () => viewEmail(email));
-                inbox.appendChild(emailEl);
-            });
-        }
-
-        // View Email
-        async function viewEmail(email) {
-            // Get full message content
-            const fullMessage = await getMessageContent(email.id);
-            
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            modal.style.display = 'flex';
-            modal.style.justifyContent = 'center';
-            modal.style.alignItems = 'center';
-            modal.style.zIndex = '1000';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.backgroundColor = 'var(--dark)';
-            modalContent.style.padding = '20px';
-            modalContent.style.borderRadius = 'var(--border-radius)';
-            modalContent.style.maxWidth = '80%';
-            modalContent.style.maxHeight = '80%';
-            modalContent.style.overflow = 'auto';
-            modalContent.style.position = 'relative';
-            modalContent.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-            
-            modalContent.innerHTML = `
-                <h3 style="color: var(--accent); margin-bottom: 10px; margin-top: 15px;">${email.subject || 'No Subject'}</h3>
-                <p><strong>From:</strong> ${email.from?.address || 'Unknown'}</p>
-                <p><strong>To:</strong> ${currentEmail}</p>
-                <p><strong>Date:</strong> ${new Date(email.createdAt).toLocaleString()}</p>
-                <div style="margin-top: 20px; white-space: pre-wrap;">${fullMessage?.text || fullMessage?.html || 'No content'}</div>
-                <button id="closeModal" style="margin-top: 20px; padding: 8px 16px; background: var(--accent); color: var(--dark); border: none; border-radius: 4px; cursor: pointer;">Close</button>
+            otpContainer.innerHTML = `
+                <div class="compact-otp-box">
+                    <div class="otp-code">${latestOTP.code}</div>
+                    <div class="otp-time">${new Date(latestOTP.timestamp).toLocaleTimeString()}</div>
+                    <button class="otp-copy-btn" id="copyOtpBtn">Copy OTP</button>
+                </div>
             `;
             
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            
-            document.getElementById('closeModal').addEventListener('click', () => {
-                document.body.removeChild(modal);
+            // Add event listener to copy button
+            document.getElementById('copyOtpBtn').addEventListener('click', function() {
+                copyToClipboard(latestOTP.code, 'OTP');
             });
         }
 
-        // Check Inbox
+        // Check Inbox for OTPs
         async function checkInbox() {
             if (!currentEmail || !authToken) return;
 
@@ -552,15 +595,36 @@
                 
                 const emails = await getMessages();
                 refreshBtn.textContent = 'Refresh';
-                renderEmails(emails);
+                
+                // Sort by date (newest first)
+                emails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                // Process emails to find OTPs
+                for (const email of emails) {
+                    const fullMessage = await getMessageContent(email.id);
+                    if (fullMessage) {
+                        const content = fullMessage.text || fullMessage.html || '';
+                        const otp = extractOTP(content);
+                        
+                        if (otp) {
+                            // Found an OTP, update the display
+                            latestOTP = {
+                                code: otp,
+                                timestamp: email.createdAt
+                            };
+                            
+                            // Save to localStorage
+                            localStorage.setItem('latestOTP', JSON.stringify(latestOTP));
+                            
+                            // Update display
+                            updateOTPDisplay();
+                            break; // Only show the most recent OTP
+                        }
+                    }
+                }
                 
             } catch (error) {
                 console.error("Error checking inbox:", error);
-                inbox.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--accent);">
-                        Could not load emails. Try refreshing.
-                    </div>
-                `;
                 refreshBtn.textContent = 'Refresh';
             }
         }
@@ -579,7 +643,17 @@
         // Generate New Email
         async function generateEmail() {
             try {
-                inbox.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="loading"></div> Generating email...</div>';
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box">
+                            <div class="loading"></div> Generating email...
+                        </div>
+                    </div>
+                `;
+                
+                // Clear existing OTP
+                latestOTP = null;
+                localStorage.removeItem('latestOTP');
                 
                 // Generate random email with mail.tm domain
                 currentEmail = await generateRandomEmail();
@@ -600,7 +674,13 @@
                 
             } catch (error) {
                 console.error("Error generating email:", error);
-                inbox.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--accent);">Please try again later</div>';
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box" style="color: var(--accent);">
+                            Error generating email. Please try again.
+                        </div>
+                    </div>
+                `;
             }
         }
 
@@ -608,27 +688,32 @@
         async function loadSavedEmail() {
             const savedEmail = localStorage.getItem('currentEmail');
             const savedToken = localStorage.getItem('authToken');
+            const savedOTP = localStorage.getItem('latestOTP');
             
             if (savedEmail && savedToken) {
                 currentEmail = savedEmail;
                 authToken = savedToken;
                 emailDisplay.textContent = currentEmail;
+                
+                if (savedOTP) {
+                    latestOTP = JSON.parse(savedOTP);
+                    updateOTPDisplay();
+                }
+                
                 await checkInbox();
             } else {
                 await generateEmail();
             }
         }
 
-        // Copy Email
-        copyBtn.addEventListener('click', async () => {
-            if (!currentEmail) return;
-            
+        // Copy to Clipboard
+        async function copyToClipboard(text, type = 'Email') {
             try {
-                await navigator.clipboard.writeText(currentEmail);
+                await navigator.clipboard.writeText(text);
                 
                 // Create a temporary "Copied!" notification
                 const notification = document.createElement('div');
-                notification.textContent = 'Copied!';
+                notification.textContent = `${type} Copied!`;
                 notification.style.position = 'fixed';
                 notification.style.bottom = '20px';
                 notification.style.left = '50%';
@@ -650,7 +735,7 @@
                 console.error('Failed to copy: ', err);
                 // Fallback for browsers that don't support clipboard API
                 const textArea = document.createElement('textarea');
-                textArea.value = currentEmail;
+                textArea.value = text;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
@@ -658,7 +743,7 @@
                 
                 // Show notification anyway
                 const notification = document.createElement('div');
-                notification.textContent = 'Copied!';
+                notification.textContent = `${type} Copied!`;
                 notification.style.position = 'fixed';
                 notification.style.bottom = '20px';
                 notification.style.left = '50%';
@@ -677,7 +762,7 @@
                     document.body.removeChild(notification);
                 }, 2000);
             }
-        });
+        }
 
         // Add button animation on click
         function animateButton(button) {
@@ -710,6 +795,9 @@
 
         copyBtn.addEventListener('click', () => {
             animateButton(copyBtn);
+            if (currentEmail) {
+                copyToClipboard(currentEmail, 'Email');
+            }
         });
 
         // Initialize
