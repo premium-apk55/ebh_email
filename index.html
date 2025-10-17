@@ -722,7 +722,7 @@
             clearInterval(refreshInterval);
             await changeEmail();
             timerCount = 10;
-            refreshInterval = setInterval(updateTimer, 1000);
+            refreshInterval = setInterval(updateTimer, 100);
         });
         
         refreshBtn.addEventListener('click', () => {
@@ -741,7 +741,7 @@
 
         // Initialize
         loadSavedEmail();
-        refreshInterval = setInterval(updateTimer, 1000);
+        refreshInterval = setInterval(updateTimer, 100);
     </script>
 </body>
 </html>
