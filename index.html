@@ -260,6 +260,10 @@
             padding: 25px 15px;
             opacity: 0.7;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .loading {
@@ -309,13 +313,6 @@
             20% { opacity: 1; transform: translateY(0); }
             80% { opacity: 1; transform: translateY(0); }
             100% { opacity: 0; transform: translateY(-5px); }
-        }
-
-        .timer-display {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            opacity: 0.8;
         }
 
         @media (max-width: 768px) {
@@ -377,8 +374,6 @@
             <button class="btn btn-secondary" id="newBtn">Change Email</button>
             <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
         </div>
-        
-        <div class="timer-display" id="timerDisplay">Auto refresh in 10 seconds</div>
 
         <!-- OTP Section - Compact OTP Box -->
         <div class="otp-section">
@@ -406,11 +401,11 @@
     <script>
         // Guerrilla Mail API Configuration
         const GUERRILLA_API_URL = "https://api.guerrillamail.com/ajax.php";
+        const DOMAINS = ["sharklasers.com", "guerrillamail.org", "grr.la", "pokemail.net", "spam4.me", "guerrillamail.biz", "guerrillamail.com", "guerrillamail.net", "guerrillamail.de"];
 
         let currentEmail = null;
         let currentSidToken = null;
         let refreshInterval = null;
-        let timerCount = 10;
         let latestOTP = null;
         let lastSeq = 0;
 
@@ -419,7 +414,6 @@
         const copyBtn = document.getElementById('copyBtn');
         const newBtn = document.getElementById('newBtn');
         const refreshBtn = document.getElementById('refreshBtn');
-        const timerDisplay = document.getElementById('timerDisplay');
         const otpContainer = document.getElementById('otpContainer');
 
         // Helper to make API call
@@ -437,21 +431,21 @@
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+            const data = await response.json();
+            if (data.sid_token) {
+                currentSidToken = data.sid_token;
+                localStorage.setItem('currentSidToken', currentSidToken);
+            }
+            return data;
         }
 
-        // Generate Initial Email
+        // Generate Initial Email with random domain
         async function generateInitialEmail() {
             try {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Generating email...
-                        </div>
-                    </div>
-                `;
+                setOTPWaiting("Generating email...");
                 
-                const data = await apiCall('get_email_address');
+                const selectedDomain = DOMAINS[Math.floor(Math.random() * DOMAINS.length)];
+                const data = await apiCall('get_email_address', {domain: selectedDomain});
                 currentEmail = data.email_addr;
                 currentSidToken = data.sid_token;
                 emailDisplay.textContent = currentEmail;
@@ -461,37 +455,26 @@
                 
                 lastSeq = 0;
                 await checkInbox();
+                updateOTPDisplay(); // Reset to waiting
             } catch (error) {
                 console.error("Error generating email:", error);
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box" style="color: var(--accent);">
-                            Error generating email. Please try again.
-                        </div>
-                    </div>
-                `;
+                setOTPError("Error generating email. Please try again.");
             }
         }
 
-        // Change Email to new random prefix
+        // Change Email to new random prefix and random domain
         async function changeEmail() {
             try {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Changing email...
-                        </div>
-                    </div>
-                `;
+                setOTPWaiting("Changing email...");
                 
                 // Clear existing OTP
                 latestOTP = null;
                 localStorage.removeItem('latestOTP');
                 
                 const randomString = Math.random().toString(36).substring(2, 10);
-                const data = await apiCall('set_email_user', {email_user: randomString, lang: 'en'});
+                const selectedDomain = DOMAINS[Math.floor(Math.random() * DOMAINS.length)];
+                const data = await apiCall('set_email_user', {email_user: randomString, lang: 'en', domain: selectedDomain});
                 currentEmail = data.email_addr;
-                if (data.sid_token) currentSidToken = data.sid_token;
                 
                 emailDisplay.textContent = currentEmail;
                 
@@ -500,16 +483,33 @@
                 
                 lastSeq = 0;
                 await checkInbox();
+                updateOTPDisplay(); // Reset to waiting
             } catch (error) {
                 console.error("Error changing email:", error);
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box" style="color: var(--accent);">
-                            Error changing email. Please try again.
-                        </div>
-                    </div>
-                `;
+                setOTPError("Error changing email. Please try again.");
             }
+        }
+
+        // Helper to set waiting state with spinner
+        function setOTPWaiting(message) {
+            otpContainer.innerHTML = `
+                <div class="compact-otp-box">
+                    <div class="empty-otp-box">
+                        <div class="loading"></div> ${message}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper for error
+        function setOTPError(message) {
+            otpContainer.innerHTML = `
+                <div class="compact-otp-box">
+                    <div class="empty-otp-box" style="color: var(--accent);">
+                        ${message}
+                    </div>
+                </div>
+            `;
         }
 
         // Load saved email from localStorage
@@ -526,6 +526,8 @@
                 if (savedOTP) {
                     latestOTP = JSON.parse(savedOTP);
                     updateOTPDisplay();
+                } else {
+                    setOTPWaiting("Waiting for OTP...");
                 }
                 
                 await checkInbox();
@@ -535,14 +537,19 @@
         }
 
         // Check Inbox for OTPs
-        async function checkInbox() {
+        async function checkInbox(showLoading = false) {
             if (!currentSidToken) return;
 
             try {
-                refreshBtn.innerHTML = '<div class="loading"></div> Loading';
+                if (showLoading) {
+                    refreshBtn.innerHTML = '<div class="loading" style="display:inline-block;"></div> Loading';
+                }
                 
                 const data = await apiCall('check_email', {seq: lastSeq});
-                refreshBtn.textContent = 'Refresh';
+                
+                if (showLoading) {
+                    refreshBtn.textContent = 'Refresh';
+                }
                 
                 if (data.list && data.list.length > 0) {
                     // Sort by timestamp (newest first)
@@ -573,7 +580,9 @@
                 
             } catch (error) {
                 console.error("Error checking inbox:", error);
-                refreshBtn.textContent = 'Refresh';
+                if (showLoading) {
+                    refreshBtn.textContent = 'Refresh';
+                }
             }
         }
 
@@ -614,13 +623,7 @@
         // Update OTP Display
         function updateOTPDisplay() {
             if (!latestOTP) {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Waiting for OTP...
-                        </div>
-                    </div>
-                `;
+                setOTPWaiting("Waiting for OTP...");
                 return;
             }
             
@@ -632,20 +635,9 @@
                 </div>
             `;
             
-            document.getElementById('copyOtpBtn').addEventListener('click', function() {
+            document.getElementById('copyOtpBtn')?.addEventListener('click', function() {
                 copyToClipboard(latestOTP.code, 'OTP');
             });
-        }
-
-        // Update Timer Display
-        function updateTimer() {
-            timerCount--;
-            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
-            
-            if (timerCount <= 0) {
-                timerCount = 10;
-                checkInbox();
-            }
         }
 
         // Copy to Clipboard
@@ -721,15 +713,12 @@
             animateButton(newBtn);
             clearInterval(refreshInterval);
             await changeEmail();
-            timerCount = 10;
-            refreshInterval = setInterval(updateTimer, 100);
+            refreshInterval = setInterval(() => checkInbox(false), 2000);
         });
         
         refreshBtn.addEventListener('click', () => {
             animateButton(refreshBtn);
-            checkInbox();
-            timerCount = 10;
-            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
+            checkInbox(true);
         });
 
         copyBtn.addEventListener('click', () => {
@@ -741,7 +730,7 @@
 
         // Initialize
         loadSavedEmail();
-        refreshInterval = setInterval(updateTimer, 100);
+        refreshInterval = setInterval(() => checkInbox(false), 2000);
     </script>
 </body>
 </html>
