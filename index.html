@@ -404,17 +404,15 @@
     </div>
 
     <script>
-        // Mail.tm API Configuration
-        const MAIL_TM_API = {
-            baseUrl: "https://api.mail.tm",
-            password: "12345678" // Default password for all accounts
-        };
+        // Guerrilla Mail API Configuration
+        const GUERRILLA_API_URL = "https://api.guerrillamail.com/ajax.php";
 
         let currentEmail = null;
-        let authToken = null;
+        let currentSidToken = null;
         let refreshInterval = null;
         let timerCount = 10;
         let latestOTP = null;
+        let lastSeq = 0;
 
         // DOM Elements
         const emailDisplay = document.getElementById('emailDisplay');
@@ -424,119 +422,187 @@
         const timerDisplay = document.getElementById('timerDisplay');
         const otpContainer = document.getElementById('otpContainer');
 
-        // Generate Random Email with Mail.tm domain
-        async function generateRandomEmail() {
+        // Helper to make API call
+        async function apiCall(functionName, params = {}) {
+            const urlParams = new URLSearchParams({
+                f: functionName,
+                ip: 'unknown',
+                agent: navigator.userAgent,
+                ...params
+            });
+            if (currentSidToken) {
+                urlParams.append('sid_token', currentSidToken);
+            }
+            const response = await fetch(`${GUERRILLA_API_URL}?${urlParams.toString()}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        // Generate Initial Email
+        async function generateInitialEmail() {
             try {
-                // First get available domain from Mail.tm
-                const domainsResponse = await fetch(`${MAIL_TM_API.baseUrl}/domains`);
-                const domainsData = await domainsResponse.json();
-                const domain = domainsData["hydra:member"][0].domain;
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box">
+                            <div class="loading"></div> Generating email...
+                        </div>
+                    </div>
+                `;
+                
+                const data = await apiCall('get_email_address');
+                currentEmail = data.email_addr;
+                currentSidToken = data.sid_token;
+                emailDisplay.textContent = currentEmail;
+                
+                localStorage.setItem('currentEmail', currentEmail);
+                localStorage.setItem('currentSidToken', currentSidToken);
+                
+                lastSeq = 0;
+                await checkInbox();
+            } catch (error) {
+                console.error("Error generating email:", error);
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box" style="color: var(--accent);">
+                            Error generating email. Please try again.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Change Email to new random prefix
+        async function changeEmail() {
+            try {
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box">
+                            <div class="loading"></div> Changing email...
+                        </div>
+                    </div>
+                `;
+                
+                // Clear existing OTP
+                latestOTP = null;
+                localStorage.removeItem('latestOTP');
                 
                 const randomString = Math.random().toString(36).substring(2, 10);
-                return `${randomString}@${domain}`;
-            } catch (error) {
-                console.error("Error getting domain:", error);
-                return `${Math.random().toString(36).substring(2, 10)}@mail.tm`; // fallback
-            }
-        }
-
-        // Create Email Account on Mail.tm
-        async function createEmailAccount(email) {
-            try {
-                const response = await fetch(`${MAIL_TM_API.baseUrl}/accounts`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        address: email,
-                        password: MAIL_TM_API.password
-                    })
-                });
+                const data = await apiCall('set_email_user', {email_user: randomString, lang: 'en'});
+                currentEmail = data.email_addr;
+                if (data.sid_token) currentSidToken = data.sid_token;
                 
-                return await response.json();
-            } catch (error) {
-                console.error("Error creating account:", error);
-                return null;
-            }
-        }
-
-        // Login to Mail.tm account
-        async function loginToAccount(email) {
-            try {
-                const response = await fetch(`${MAIL_TM_API.baseUrl}/token`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        address: email,
-                        password: MAIL_TM_API.password
-                    })
-                });
+                emailDisplay.textContent = currentEmail;
                 
-                const data = await response.json();
-                return data.token;
+                localStorage.setItem('currentEmail', currentEmail);
+                localStorage.setItem('currentSidToken', currentSidToken);
+                
+                lastSeq = 0;
+                await checkInbox();
             } catch (error) {
-                console.error("Error logging in:", error);
-                return null;
+                console.error("Error changing email:", error);
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box" style="color: var(--accent);">
+                            Error changing email. Please try again.
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        // Get Messages from Mail.tm
-        async function getMessages() {
-            if (!authToken) return [];
+        // Load saved email from localStorage
+        async function loadSavedEmail() {
+            const savedEmail = localStorage.getItem('currentEmail');
+            const savedSidToken = localStorage.getItem('currentSidToken');
+            const savedOTP = localStorage.getItem('latestOTP');
             
-            try {
-                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages`, {
-                    headers: {
-                        "Authorization": `Bearer ${authToken}`
-                    }
-                });
+            if (savedEmail && savedSidToken) {
+                currentEmail = savedEmail;
+                currentSidToken = savedSidToken;
+                emailDisplay.textContent = currentEmail;
                 
-                const data = await response.json();
-                return data["hydra:member"] || [];
-            } catch (error) {
-                console.error("Error getting messages:", error);
-                return [];
+                if (savedOTP) {
+                    latestOTP = JSON.parse(savedOTP);
+                    updateOTPDisplay();
+                }
+                
+                await checkInbox();
+            } else {
+                await generateInitialEmail();
             }
         }
 
-        // Get Single Message Content
-        async function getMessageContent(messageId) {
-            if (!authToken) return null;
-            
+        // Check Inbox for OTPs
+        async function checkInbox() {
+            if (!currentSidToken) return;
+
             try {
-                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages/${messageId}`, {
-                    headers: {
-                        "Authorization": `Bearer ${authToken}`
-                    }
-                });
+                refreshBtn.innerHTML = '<div class="loading"></div> Loading';
                 
-                const data = await response.json();
-                return data;
+                const data = await apiCall('check_email', {seq: lastSeq});
+                refreshBtn.textContent = 'Refresh';
+                
+                if (data.list && data.list.length > 0) {
+                    // Sort by timestamp (newest first)
+                    data.list.sort((a, b) => b.mail_timestamp - a.mail_timestamp);
+                    
+                    // Process messages to find OTPs
+                    for (const message of data.list) {
+                        const fullMessage = await apiCall('fetch_email', {email_id: message.mail_id});
+                        if (fullMessage) {
+                            const content = fullMessage.mail_body || '';
+                            const otp = extractOTP(content);
+                            
+                            if (otp) {
+                                latestOTP = {
+                                    code: otp,
+                                    timestamp: message.mail_timestamp * 1000 // to ms
+                                };
+                                
+                                localStorage.setItem('latestOTP', JSON.stringify(latestOTP));
+                                
+                                updateOTPDisplay();
+                                lastSeq = message.mail_id;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
             } catch (error) {
-                console.error("Error getting message content:", error);
-                return null;
+                console.error("Error checking inbox:", error);
+                refreshBtn.textContent = 'Refresh';
             }
         }
 
         // Extract OTP from email content
         function extractOTP(content) {
-            // Common OTP patterns - focusing on 6-digit codes which are most common
+            if (!content) return null;
+            
             const otpPatterns = [
-                /\b\d{6}\b/g, // 6-digit OTP (most common)
-                /verification code:?\s*(\d{6})/i,
-                /OTP:?\s*(\d{6})/i,
-                /code:?\s*(\d{6})/i,
-                /one-time password:?\s*(\d{6})/i,
-                /one time password:?\s*(\d{6})/i
+                /\b\d{6}\b/g,
+                /\b\d{4}\b/g,
+                /verification code:?\s*(\d{4,6})/i,
+                /OTP:?\s*(\d{4,6})/i,
+                /code:?\s*(\d{4,6})/i,
+                /one-time password:?\s*(\d{4,6})/i,
+                /one time password:?\s*(\d{4,6})/i,
+                /password:?\s*(\d{4,6})/i,
+                /(\d{4,6})/g
             ];
             
             for (const pattern of otpPatterns) {
                 const matches = content.match(pattern);
                 if (matches) {
                     for (const match of matches) {
-                        // Extract just the digits
-                        const digitMatch = match.match(/\d{6}/);
+                        const digitMatch = match.match(/\d{4,6}/);
                         if (digitMatch) {
-                            return digitMatch[0];
+                            const otp = digitMatch[0];
+                            if (otp !== "000000" && otp !== "0000" && !otp.match(/^0+$/)) {
+                                return otp;
+                            }
                         }
                     }
                 }
@@ -566,53 +632,9 @@
                 </div>
             `;
             
-            // Add event listener to copy button
             document.getElementById('copyOtpBtn').addEventListener('click', function() {
                 copyToClipboard(latestOTP.code, 'OTP');
             });
-        }
-
-        // Check Inbox for OTPs
-        async function checkInbox() {
-            if (!currentEmail || !authToken) return;
-
-            try {
-                refreshBtn.innerHTML = '<div class="loading"></div> Loading';
-                
-                const emails = await getMessages();
-                refreshBtn.textContent = 'Refresh';
-                
-                // Sort by date (newest first)
-                emails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
-                // Process emails to find OTPs
-                for (const email of emails) {
-                    const fullMessage = await getMessageContent(email.id);
-                    if (fullMessage) {
-                        const content = fullMessage.text || fullMessage.html || '';
-                        const otp = extractOTP(content);
-                        
-                        if (otp) {
-                            // Found an OTP, update the display
-                            latestOTP = {
-                                code: otp,
-                                timestamp: email.createdAt
-                            };
-                            
-                            // Save to localStorage
-                            localStorage.setItem('latestOTP', JSON.stringify(latestOTP));
-                            
-                            // Update display
-                            updateOTPDisplay();
-                            break; // Only show the most recent OTP
-                        }
-                    }
-                }
-                
-            } catch (error) {
-                console.error("Error checking inbox:", error);
-                refreshBtn.textContent = 'Refresh';
-            }
         }
 
         // Update Timer Display
@@ -626,78 +648,11 @@
             }
         }
 
-        // Generate New Email
-        async function generateEmail() {
-            try {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Generating email...
-                        </div>
-                    </div>
-                `;
-                
-                // Clear existing OTP
-                latestOTP = null;
-                localStorage.removeItem('latestOTP');
-                
-                // Generate random email with mail.tm domain
-                currentEmail = await generateRandomEmail();
-                emailDisplay.textContent = currentEmail;
-                
-                // Create account on mail.tm
-                await createEmailAccount(currentEmail);
-                
-                // Login to get auth token
-                authToken = await loginToAccount(currentEmail);
-                
-                // Save to localStorage
-                localStorage.setItem('currentEmail', currentEmail);
-                localStorage.setItem('authToken', authToken);
-                
-                // Check inbox
-                await checkInbox();
-                
-            } catch (error) {
-                console.error("Error generating email:", error);
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box" style="color: var(--accent);">
-                            Error generating email. Please try again.
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Load saved email from localStorage
-        async function loadSavedEmail() {
-            const savedEmail = localStorage.getItem('currentEmail');
-            const savedToken = localStorage.getItem('authToken');
-            const savedOTP = localStorage.getItem('latestOTP');
-            
-            if (savedEmail && savedToken) {
-                currentEmail = savedEmail;
-                authToken = savedToken;
-                emailDisplay.textContent = currentEmail;
-                
-                if (savedOTP) {
-                    latestOTP = JSON.parse(savedOTP);
-                    updateOTPDisplay();
-                }
-                
-                await checkInbox();
-            } else {
-                await generateEmail();
-            }
-        }
-
         // Copy to Clipboard
         async function copyToClipboard(text, type = 'Email') {
             try {
                 await navigator.clipboard.writeText(text);
                 
-                // Create a temporary "Copied!" notification
                 const notification = document.createElement('div');
                 notification.textContent = `${type} Copied!`;
                 notification.style.position = 'fixed';
@@ -720,7 +675,6 @@
                 }, 1500);
             } catch (err) {
                 console.error('Failed to copy: ', err);
-                // Fallback for browsers that don't support clipboard API
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
                 document.body.appendChild(textArea);
@@ -728,7 +682,6 @@
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
                 
-                // Show notification anyway
                 const notification = document.createElement('div');
                 notification.textContent = `${type} Copied!`;
                 notification.style.position = 'fixed';
@@ -764,20 +717,18 @@
         }
 
         // Event Listeners with animations
-        newBtn.addEventListener('click', () => {
+        newBtn.addEventListener('click', async () => {
             animateButton(newBtn);
             clearInterval(refreshInterval);
-            // Clear saved data
-            localStorage.removeItem('currentEmail');
-            localStorage.removeItem('authToken');
-            generateEmail();
+            await changeEmail();
+            timerCount = 10;
             refreshInterval = setInterval(updateTimer, 1000);
         });
         
         refreshBtn.addEventListener('click', () => {
             animateButton(refreshBtn);
             checkInbox();
-            timerCount = 10; // Reset timer
+            timerCount = 10;
             timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
         });
 
