@@ -316,6 +316,7 @@
             margin-top: 10px;
             font-size: 0.8rem;
             opacity: 0.8;
+            display: none; /* Hidden as requested */
         }
 
         @media (max-width: 768px) {
@@ -410,7 +411,6 @@
         let currentEmail = null;
         let currentSidToken = null;
         let refreshInterval = null;
-        let timerCount = 10;
         let latestOTP = null;
         let lastSeq = 0;
 
@@ -539,10 +539,8 @@
             if (!currentSidToken) return;
 
             try {
-                refreshBtn.innerHTML = '<div class="loading"></div> Loading';
-                
+                // No loading spinner on refresh button as requested
                 const data = await apiCall('check_email', {seq: lastSeq});
-                refreshBtn.textContent = 'Refresh';
                 
                 if (data.list && data.list.length > 0) {
                     // Sort by timestamp (newest first)
@@ -573,7 +571,6 @@
                 
             } catch (error) {
                 console.error("Error checking inbox:", error);
-                refreshBtn.textContent = 'Refresh';
             }
         }
 
@@ -635,17 +632,6 @@
             document.getElementById('copyOtpBtn').addEventListener('click', function() {
                 copyToClipboard(latestOTP.code, 'OTP');
             });
-        }
-
-        // Update Timer Display
-        function updateTimer() {
-            timerCount--;
-            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
-            
-            if (timerCount <= 0) {
-                timerCount = 10;
-                checkInbox();
-            }
         }
 
         // Copy to Clipboard
@@ -721,15 +707,12 @@
             animateButton(newBtn);
             clearInterval(refreshInterval);
             await changeEmail();
-            timerCount = 10;
-            refreshInterval = setInterval(updateTimer, 100);
+            refreshInterval = setInterval(checkInbox, 1000); // 1 second auto refresh
         });
         
         refreshBtn.addEventListener('click', () => {
             animateButton(refreshBtn);
             checkInbox();
-            timerCount = 10;
-            timerDisplay.textContent = `Auto refresh in ${timerCount} seconds`;
         });
 
         copyBtn.addEventListener('click', () => {
@@ -741,7 +724,7 @@
 
         // Initialize
         loadSavedEmail();
-        refreshInterval = setInterval(updateTimer, 100);
+        refreshInterval = setInterval(checkInbox, 1000); // 1 second auto refresh
     </script>
 </body>
 </html>
