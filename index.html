@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TURBO TEMP MAIL - OTP EXTRACTOR</title>
+    <title>TURBO TEMP MAIL - EARNING BY HABIB</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -31,18 +31,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            text-align: left;
+            padding: 20px;
         }
 
         .header-container {
             width: 100%;
             max-width: 1080px;
             height: 299px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-radius: var(--border-radius);
             overflow: hidden;
             position: relative;
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
             transition: all 0.5s;
             border: 2px solid transparent;
             animation: borderGlow 8s linear infinite;
@@ -65,33 +66,54 @@
             object-fit: cover;
         }
 
+        .header-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(255,215,0,0.8);
+        }
+
         .header-text {
             text-align: center;
-            margin: 10px 0;
+            margin: 15px 0;
         }
 
         .logo-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
             color: var(--light);
-            margin-bottom: 3px;
-            text-shadow: 0 0 8px rgba(255,215,0,0.5);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            position: relative;
+            display: inline-block;
+            padding: 0 10px;
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid var(--accent);
+            border-radius: 5px;
+            opacity: 0.7;
+            z-index: -1;
         }
 
         .subtitle-text {
-            font-size: 1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
         }
 
         .card {
             width: 100%;
-            max-width: 550px;
+            max-width: 600px;
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 20px;
+            padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
@@ -112,9 +134,9 @@
         .email-display {
             background: rgba(0,0,0,0.3);
             border-radius: var(--border-radius);
-            padding: 12px;
-            font-size: 1rem;
-            margin-bottom: 15px;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             word-break: break-all;
             text-align: center;
@@ -135,13 +157,13 @@
         .button-group {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            margin-bottom: 25px;
+            flex-wrap: nowrap;
             justify-content: center;
         }
 
         .btn {
-            padding: 10px 18px;
+            padding: 12px 20px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: var(--border-radius);
             background: var(--accent);
@@ -149,22 +171,21 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 90px;
-            font-size: 0.9rem;
+            min-width: 100px;
             position: relative;
             overflow: hidden;
             transform: translateY(0);
-            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .btn:active {
-            transform: translateY(-4px) scale(1.04);
-            box-shadow: 0 8px 15px rgba(255,214,0,0.5);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(255,214,0,0.5);
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(255,214,0,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(255,214,0,0.4);
         }
 
         .btn-secondary {
@@ -178,7 +199,7 @@
         }
 
         .otp-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .otp-title {
@@ -262,11 +283,15 @@
             font-size: 0.9rem;
         }
 
+        .inbox {
+            display: none; /* Hidden as per request */
+        }
+
         .loading {
             display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: var(--accent);
             animation: spin 1s linear infinite;
@@ -278,8 +303,8 @@
 
         .video-container {
             width: 100%;
-            max-width: 550px;
-            margin-top: 25px;
+            max-width: 600px;
+            margin-top: 30px;
             border-radius: var(--border-radius);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -299,24 +324,20 @@
 
         .video-container iframe {
             width: 100%;
-            height: 280px;
+            height: 340px;
             border: none;
             border-radius: var(--border-radius);
         }
 
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(5px); }
+            0% { opacity: 0; transform: translateY(10px); }
             20% { opacity: 1; transform: translateY(0); }
             80% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-5px); }
+            100% { opacity: 0; transform: translateY(-10px); }
         }
 
         .timer-display {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            opacity: 0.8;
-            display: none; /* Hidden as requested */
+            display: none; /* Hidden as per request */
         }
 
         @media (max-width: 768px) {
@@ -330,13 +351,11 @@
             }
             
             .btn {
-                padding: 8px 14px;
-                font-size: 0.85rem;
-                min-width: 80px;
+                padding: 10px 15px;
             }
 
             .video-container iframe {
-                height: 220px;
+                height: 200px;
             }
             
             .otp-code {
@@ -348,39 +367,46 @@
                 min-height: 100px;
                 padding: 12px;
             }
-            
-            .card {
-                padding: 15px;
-            }
         }
     </style>
 </head>
 <body>
+	<script type='text/javascript' src='//pl27278657.profitableratecpm.com/1a/c5/7d/1ac57da8a82142ad962f0afc4ca8f086.js'></script>
     <!-- Header Image with Clickable Link -->
     <div class="header-container">
         <a href="https://earningbyhabib.github.io/Tempmail/Note.html" target="_blank">
-            <img src="https://i.postimg.cc/6QYvtPq3/Screenshot-20251017-154152.jpg" alt="EARNING BY HABIB" class="header-image">
+            <img src="https://i.postimg.cc/dVpCWVnp/Screenshot-20251017-154152.jpg" alt="EARNING BY HABIB" class="header-image">
         </a>
     </div>
 
     <!-- Text Below Image -->
     <div class="header-text">
         <div class="logo-text">EBH_EMAIL</div>
-        <div class="subtitle-text">𝐄𝐀𝐑𝐍𝐈𝐍𝐆 𝐁𝐘 𝐇𝐀𝐁𝐈𝐁</div>
+        <div class="subtitle-text">Welcome to Earning By Habib </div>
     </div>
+    <script type="text/javascript">
+	atOptions = {
+		'key' : 'c3ef9a757b7897fe421c93374d061946',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/c3ef9a757b7897fe421c93374d061946/invoke.js"></script>
 
     <!-- Main Content -->
     <div class="card">
         <div class="email-display" id="emailDisplay">Loading...</div>
         
         <div class="button-group">
-            <button class="btn" id="copyBtn">Copy Email</button>
+            <button class="btn" id="copyBtn">Copy</button>
             <button class="btn btn-secondary" id="newBtn">Change Email</button>
             <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
         </div>
         
         <div class="timer-display" id="timerDisplay">Auto refresh in 10 seconds</div>
-  মেইল চেন্জ নাহলে এপ্সএর ডাটা ক্লিয়ার করে দেন
+
         <!-- OTP Section - Compact OTP Box -->
         <div class="otp-section">
             <div class="otp-title">Latest OTP Code</div>
@@ -392,189 +418,147 @@
                 </div>
             </div>
         </div>
+
+        <div class="inbox" id="inbox">
+            <div style="text-align: center; padding: 20px;">
+                <div class="loading"></div> Loading emails...
+            </div>
+        </div>
     </div>
 
-    <!-- YouTube Video Container -->
-    <div class="video-container">
-        <iframe id="youtubePlayer" 
-                src="https://www.youtube.com/embed/clB58ECxlJ0"
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>
-    </div>
+<!-- YouTube Video Container -->
+<div class="video-container">
+    <iframe id="youtubePlayer" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+</div>
+
+<script>
+    // এখানে শুধু ভিডিও আইডি দিন (পুরো URL নয়)
+    const youtubeVideoId = 'clB58ECxlJ0';
+    
+    // সঠিক এম্বেড URL সেট করা হচ্ছে
+    document.getElementById('youtubePlayer').src = `https://www.youtube.com/embed/${youtubeVideoId}`;
+</script>
 
     <script>
-        // Guerrilla Mail API Configuration
-        const GUERRILLA_API_URL = "https://api.guerrillamail.com/ajax.php";
+        // Mail.tm API Configuration
+        const MAIL_TM_API = {
+            baseUrl: "https://api.mail.tm",
+            password: "12345678" // Default password for all accounts
+        };
 
         let currentEmail = null;
-        let currentSidToken = null;
+        let authToken = null;
         let refreshInterval = null;
         let latestOTP = null;
         let lastSeq = 0;
 
         // DOM Elements
         const emailDisplay = document.getElementById('emailDisplay');
+        const inbox = document.getElementById('inbox');
         const copyBtn = document.getElementById('copyBtn');
         const newBtn = document.getElementById('newBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const timerDisplay = document.getElementById('timerDisplay');
         const otpContainer = document.getElementById('otpContainer');
 
-        // Helper to make API call
-        async function apiCall(functionName, params = {}) {
-            const urlParams = new URLSearchParams({
-                f: functionName,
-                ip: 'unknown',
-                agent: navigator.userAgent,
-                ...params
-            });
-            if (currentSidToken) {
-                urlParams.append('sid_token', currentSidToken);
-            }
-            const response = await fetch(`${GUERRILLA_API_URL}?${urlParams.toString()}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        }
-
-        // Generate Initial Email
-        async function generateInitialEmail() {
+        // Generate Random Email with Mail.tm domain
+        async function generateRandomEmail() {
             try {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Generating email...
-                        </div>
-                    </div>
-                `;
-                
-                const data = await apiCall('get_email_address');
-                currentEmail = data.email_addr;
-                currentSidToken = data.sid_token;
-                emailDisplay.textContent = currentEmail;
-                
-                localStorage.setItem('currentEmail', currentEmail);
-                localStorage.setItem('currentSidToken', currentSidToken);
-                
-                lastSeq = 0;
-                await checkInbox();
-            } catch (error) {
-                console.error("Error generating email:", error);
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box" style="color: var(--accent);">
-                            Error generating email. Please try again.
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Change Email to new random prefix
-        async function changeEmail() {
-            try {
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box">
-                            <div class="loading"></div> Changing email...
-                        </div>
-                    </div>
-                `;
-                
-                // Clear existing OTP
-                latestOTP = null;
-                localStorage.removeItem('latestOTP');
+                // First get available domain from Mail.tm
+                const domainsResponse = await fetch(`${MAIL_TM_API.baseUrl}/domains`);
+                const domainsData = await domainsResponse.json();
+                const domain = domainsData["hydra:member"][0].domain;
                 
                 const randomString = Math.random().toString(36).substring(2, 10);
-                const data = await apiCall('set_email_user', {email_user: randomString, lang: 'en'});
-                currentEmail = data.email_addr;
-                if (data.sid_token) currentSidToken = data.sid_token;
-                
-                emailDisplay.textContent = currentEmail;
-                
-                localStorage.setItem('currentEmail', currentEmail);
-                localStorage.setItem('currentSidToken', currentSidToken);
-                
-                lastSeq = 0;
-                await checkInbox();
+                return `${randomString}@${domain}`;
             } catch (error) {
-                console.error("Error changing email:", error);
-                otpContainer.innerHTML = `
-                    <div class="compact-otp-box">
-                        <div class="empty-otp-box" style="color: var(--accent);">
-                            Error changing email. Please try again.
-                        </div>
-                    </div>
-                `;
+                console.error("Error getting domain:", error);
+                return `${Math.random().toString(36).substring(2, 10)}@mail.tm`; // fallback
             }
         }
 
-        // Load saved email from localStorage
-        async function loadSavedEmail() {
-            const savedEmail = localStorage.getItem('currentEmail');
-            const savedSidToken = localStorage.getItem('currentSidToken');
-            const savedOTP = localStorage.getItem('latestOTP');
-            
-            if (savedEmail && savedSidToken) {
-                currentEmail = savedEmail;
-                currentSidToken = savedSidToken;
-                emailDisplay.textContent = currentEmail;
-                
-                if (savedOTP) {
-                    latestOTP = JSON.parse(savedOTP);
-                    updateOTPDisplay();
-                }
-                
-                await checkInbox();
-            } else {
-                await generateInitialEmail();
-            }
-        }
-
-        // Check Inbox for OTPs
-        async function checkInbox() {
-            if (!currentSidToken) return;
-
+        // Create Email Account on Mail.tm
+        async function createEmailAccount(email) {
             try {
-                // No loading spinner on refresh button as requested
-                const data = await apiCall('check_email', {seq: lastSeq});
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/accounts`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        address: email,
+                        password: MAIL_TM_API.password
+                    })
+                });
                 
-                if (data.list && data.list.length > 0) {
-                    // Sort by timestamp (newest first)
-                    data.list.sort((a, b) => b.mail_timestamp - a.mail_timestamp);
-                    
-                    // Process messages to find OTPs
-                    for (const message of data.list) {
-                        const fullMessage = await apiCall('fetch_email', {email_id: message.mail_id});
-                        if (fullMessage) {
-                            const content = fullMessage.mail_body || '';
-                            const otp = extractOTP(content);
-                            
-                            if (otp) {
-                                latestOTP = {
-                                    code: otp,
-                                    timestamp: message.mail_timestamp * 1000 // to ms
-                                };
-                                
-                                localStorage.setItem('latestOTP', JSON.stringify(latestOTP));
-                                
-                                updateOTPDisplay();
-                                lastSeq = message.mail_id;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
+                return await response.json();
             } catch (error) {
-                console.error("Error checking inbox:", error);
+                console.error("Error creating account:", error);
+                return null;
             }
         }
 
-        // Extract OTP from email content
+        // Login to Mail.tm account
+        async function loginToAccount(email) {
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/token`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        address: email,
+                        password: MAIL_TM_API.password
+                    })
+                });
+                
+                const data = await response.json();
+                return data.token;
+            } catch (error) {
+                console.error("Error logging in:", error);
+                return null;
+            }
+        }
+
+        // Get Messages from Mail.tm
+        async function getMessages() {
+            if (!authToken) return [];
+            
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages`, {
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data["hydra:member"] || [];
+            } catch (error) {
+                console.error("Error getting messages:", error);
+                return [];
+            }
+        }
+
+        // Get Single Message Content
+        async function getMessageContent(messageId) {
+            if (!authToken) return null;
+            
+            try {
+                const response = await fetch(`${MAIL_TM_API.baseUrl}/messages/${messageId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error getting message content:", error);
+                return null;
+            }
+        }
+
+        // Extract OTP from content
         function extractOTP(content) {
             if (!content) return null;
             
@@ -634,7 +618,7 @@
             });
         }
 
-        // Copy to Clipboard
+        // Copy to Clipboard (reusing existing logic)
         async function copyToClipboard(text, type = 'Email') {
             try {
                 await navigator.clipboard.writeText(text);
@@ -648,17 +632,16 @@
                 notification.style.backgroundColor = 'var(--accent)';
                 notification.style.color = 'var(--dark)';
                 notification.style.padding = '10px 20px';
-                notification.style.borderRadius = '40px';
+                notification.style.borderRadius = '50px';
                 notification.style.zIndex = '1000';
-                notification.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
-                notification.style.animation = 'fadeInOut 1.5s ease-in-out';
-                notification.style.fontSize = '0.9rem';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.animation = 'fadeInOut 2s ease-in-out';
                 
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
                     document.body.removeChild(notification);
-                }, 1500);
+                }, 2000);
             } catch (err) {
                 console.error('Failed to copy: ', err);
                 const textArea = document.createElement('textarea');
@@ -677,37 +660,151 @@
                 notification.style.backgroundColor = 'var(--accent)';
                 notification.style.color = 'var(--dark)';
                 notification.style.padding = '10px 20px';
-                notification.style.borderRadius = '40px';
+                notification.style.borderRadius = '50px';
                 notification.style.zIndex = '1000';
-                notification.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
-                notification.style.animation = 'fadeInOut 1.5s ease-in-out';
-                notification.style.fontSize = '0.9rem';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.animation = 'fadeInOut 2s ease-in-out';
                 
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
                     document.body.removeChild(notification);
-                }, 1500);
+                }, 2000);
             }
         }
 
+        // Render Emails
+        function renderEmails(emails) {
+            // Removed as inbox is hidden
+        }
+
+        // View Email
+        async function viewEmail(email) {
+            // Removed as inbox is hidden
+        }
+
+        // Check Inbox
+        async function checkInbox() {
+            if (!currentEmail || !authToken) return;
+
+            try {
+                const emails = await getMessages();
+
+                // Sort emails by createdAt descending
+                emails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Process for OTP (latest first)
+                for (const email of emails) {
+                    if (email.id <= lastSeq) continue;
+                    const fullMessage = await getMessageContent(email.id);
+                    if (fullMessage) {
+                        const content = fullMessage.text || fullMessage.html || '';
+                        const otp = extractOTP(content);
+                        if (otp) {
+                            latestOTP = {
+                                code: otp,
+                                timestamp: new Date(email.createdAt).getTime()
+                            };
+                            localStorage.setItem('latestOTP', JSON.stringify(latestOTP));
+                            updateOTPDisplay();
+                            lastSeq = email.id;
+                            break;
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error checking inbox:", error);
+            }
+        }
+
+        // Generate New Email
+        async function generateEmail() {
+            try {
+                otpContainer.innerHTML = `
+                    <div class="compact-otp-box">
+                        <div class="empty-otp-box">
+                            <div class="loading"></div> Generating email...
+                        </div>
+                    </div>
+                `;
+                
+                // Generate random email with mail.tm domain
+                currentEmail = await generateRandomEmail();
+                emailDisplay.textContent = currentEmail;
+                
+                // Create account on mail.tm
+                await createEmailAccount(currentEmail);
+                
+                // Login to get auth token
+                authToken = await loginToAccount(currentEmail);
+                
+                // Save to localStorage
+                localStorage.setItem('currentEmail', currentEmail);
+                localStorage.setItem('authToken', authToken);
+                
+                latestOTP = null;
+                localStorage.removeItem('latestOTP');
+                lastSeq = 0;
+                updateOTPDisplay();
+                
+                // Check inbox
+                await checkInbox();
+                
+            } catch (error) {
+                console.error("Error generating email:", error);
+            }
+        }
+
+        // Load saved email from localStorage
+        async function loadSavedEmail() {
+            const savedEmail = localStorage.getItem('currentEmail');
+            const savedToken = localStorage.getItem('authToken');
+            const savedOTP = localStorage.getItem('latestOTP');
+            
+            if (savedEmail && savedToken) {
+                currentEmail = savedEmail;
+                authToken = savedToken;
+                emailDisplay.textContent = currentEmail;
+
+                if (savedOTP) {
+                    latestOTP = JSON.parse(savedOTP);
+                    updateOTPDisplay();
+                }
+                
+                await checkInbox();
+            } else {
+                await generateEmail();
+            }
+        }
+
+        // Copy Email
+        copyBtn.addEventListener('click', async () => {
+            if (!currentEmail) return;
+            
+            copyToClipboard(currentEmail, 'Email');
+        });
+
         // Add button animation on click
         function animateButton(button) {
-            button.style.transform = 'translateY(-4px) scale(1.04)';
+            button.style.transform = 'translateY(-5px) scale(1.05)';
             setTimeout(() => {
-                button.style.transform = 'translateY(-2px)';
+                button.style.transform = 'translateY(-3px)';
                 setTimeout(() => {
                     button.style.transform = 'translateY(0)';
-                }, 80);
-            }, 80);
+                }, 100);
+            }, 100);
         }
 
         // Event Listeners with animations
-        newBtn.addEventListener('click', async () => {
+        newBtn.addEventListener('click', () => {
             animateButton(newBtn);
             clearInterval(refreshInterval);
-            await changeEmail();
-            refreshInterval = setInterval(checkInbox, 1000); // 1 second auto refresh
+            // Clear saved data
+            localStorage.removeItem('currentEmail');
+            localStorage.removeItem('authToken');
+            generateEmail();
+            refreshInterval = setInterval(checkInbox, 1000);
         });
         
         refreshBtn.addEventListener('click', () => {
@@ -717,14 +814,11 @@
 
         copyBtn.addEventListener('click', () => {
             animateButton(copyBtn);
-            if (currentEmail) {
-                copyToClipboard(currentEmail, 'Email');
-            }
         });
 
         // Initialize
         loadSavedEmail();
-        refreshInterval = setInterval(checkInbox, 1000); // 1 second auto refresh
+        refreshInterval = setInterval(checkInbox, 1000);
     </script>
 </body>
 </html>
