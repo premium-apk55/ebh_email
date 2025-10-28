@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ইন্সট্যান্ট মেইল - ওটিপি রিসিভার</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff3838 0%, #ff4757 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .email-display {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .current-email {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff4757;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        
+        /* বাটন লেআউট: মোবাইল অপটিমাইজড */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            min-height: 44px; /* মোবাইল টাচ ফ্রেন্ডলি */
+        }
+        
+        .btn-primary {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #ff3838;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-refresh {
+            background: #ffa502;
+            color: #333;
+            width: 110px;
+            font-size: 0.9rem;
+            padding: 10px 16px;
+            min-height: 44px;
+            border-radius: 8px;
+        }
+        
+        .btn-refresh:hover {
+            background: #ff9f43;
+        }
+        
+        .mailbox {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            transition: opacity 0.2s ease;
+        }
+        
+        .mailbox-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.1rem;
+        }
+        
+        .otp-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff4757;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.3s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .otp-service {
+            font-weight: bold;
+            color: #ff4757;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .otp-code {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+        
+        .otp-time {
+            font-size: 0.8rem;
+            color: #777;
+            text-align: right;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0 auto;
+            transition: background 0.3s ease;
+            min-height: 40px;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+        
+        .service-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .telegram-section {
+            background: #f8f9fa;
+            padding: 25px 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .telegram-title {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .telegram-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 280px;
+            min-height: 50px;
+        }
+        
+        .telegram-btn:hover {
+            background: #0077b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.3);
+        }
+        
+        .telegram-icon {
+            width: 28px;
+            height: 28px;
+            fill: #0088cc;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        /* শুধুমাত্র মোবাইল অপটিমাইজেশন — ডেস্কটপের জন্য কোনো মিডিয়া কোয়েরি নেই */
+        .btn-row {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        
+        .btn, .btn-refresh, .telegram-btn, .copy-btn {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>𝗘𝗔𝗥𝗡𝗜𝗡𝗚 𝗕𝗬 𝗛𝗔𝗕𝗜𝗕</h1>
+            <p>ওটিপি রিসিভার - শুধুমাত্র ওটিপি কোড দেখুন</p>
+        </div>
+        
+        <div class="email-display">
+            <div class="current-email" id="currentEmail">লোডিং...</div>
+            
+            <!-- বাটন লেআউট: মোবাইল অপটিমাইজড -->
+            <div class="btn-container">
+                <div class="btn-row">
+                    <button class="btn btn-primary" id="newEmailBtn">
+                        নতুন ইমেইল
+                    </button>
+                    <button class="btn btn-secondary" id="copyEmailBtn">
+                        ইমেইল কপি
+                    </button>
+                </div>
+                <button class="btn btn-refresh" id="refreshBtn">
+                    রিফ্রেশ
+                </button>
+            </div>
+        </div>
+        
+        <div class="mailbox">
+            <div class="mailbox-title">ওটিপি মেসেজ</div>
+            <div id="otpList"></div>
+            <div class="empty-state" id="emptyState">
+                <p>ওয়েটিং ফর ওটিপি</p>
+                <p>আপনার ইমেইল ঠিকানা ব্যবহার করে ওটিপি পাঠান</p>
+            </div>
+        </div>
+        
+        <div class="telegram-section">
+            <div class="telegram-title">আমাদের টেলিগ্রাম চ্যানেলে জয়েন করুন</div>
+            <a href="https://earningbyhabib.github.io/Tempmail/Note.html" class="telegram-btn" target="_blank">
+                <svg class="telegram-icon" viewBox="0 0 24 24">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.519 4.476-1.635z" fill="#0088cc"/>
+                </svg>
+                টেলিগ্রাম চ্যানেল
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = '7f29372c96cb4197738db42b62854fa18b93843205a89a98a0932b8329750374';
+        const API_BASE = 'https://api.mailslurp.com';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const newEmailBtn = document.getElementById('newEmailBtn');
+            const copyEmailBtn = document.getElementById('copyEmailBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const currentEmail = document.getElementById('currentEmail');
+            const otpList = document.getElementById('otpList');
+            const emptyState = document.getElementById('emptyState');
+            let currentInboxId = null;
+            let intervalId = null;
+            let isFetching = false;
+
+            function loadSavedEmail() {
+                const savedEmail = localStorage.getItem('instantMail_email');
+                const savedInboxId = localStorage.getItem('instantMail_inboxId');
+                
+                if (savedEmail && savedInboxId) {
+                    currentEmail.textContent = savedEmail;
+                    currentInboxId = savedInboxId;
+                    startAutoRefresh();
+                } else {
+                    generateNewEmail();
+                }
+            }
+
+            function extractOTP(content) {
+                const otpRegex = /\b\d{4,6}\b/g;
+                const matches = content.match(otpRegex);
+                return matches ? matches[0] : null;
+            }
+
+            async function generateNewEmail() {
+                if (isFetching) return;
+                isFetching = true;
+                try {
+                    currentEmail.textContent = 'তৈরি হচ্ছে...';
+                    otpList.innerHTML = '';
+                    emptyState.style.display = 'block';
+
+                    const response = await fetch(`${API_BASE}/inboxes`, {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': API_KEY,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!response.ok) throw new Error('API Error');
+                    const data = await response.json();
+
+                    currentInboxId = data.id;
+                    currentEmail.textContent = data.emailAddress;
+                    
+                    localStorage.setItem('instantMail_email', data.emailAddress);
+                    localStorage.setItem('instantMail_inboxId', data.id);
+                    
+                    emptyState.style.display = 'block';
+                    startAutoRefresh();
+                } catch (error) {
+                    currentEmail.textContent = 'ত্রুটি: পুনরায় চেষ্টা করুন';
+                    console.error(error);
+                } finally {
+                    isFetching = false;
+                }
+            }
+
+            async function fetchEmails() {
+                if (!currentInboxId || isFetching) return;
+                isFetching = true;
+
+                try {
+                    const response = await fetch(`${API_BASE}/inboxes/${currentInboxId}/emails?unreadOnly=true`, {
+                        headers: { 'x-api-key': API_KEY }
+                    });
+                    if (!response.ok) return;
+                    const emails = await response.json();
+
+                    const newOtps = [];
+                    for (const email of emails) {
+                        if (document.querySelector(`[data-email-id="${email.id}"]`)) continue;
+
+                        const bodyRes = await fetch(`${API_BASE}/emails/${email.id}`, {
+                            headers: { 'x-api-key': API_KEY }
+                        });
+                        const bodyData = await bodyRes.json();
+                        const content = (bodyData.body || bodyData.bodyExcerpt || '').toLowerCase();
+                        const otp = extractOTP(content);
+                        if (otp) {
+                            const sender = email.from || 'অজানা';
+                            const serviceName = sender.includes('facebook') ? 'ফেসবুক' :
+                                               sender.includes('instagram') ? 'ইনস্টাগ্রাম' :
+                                               sender.split('@')[1]?.split('.')[0] || 'অজানা';
+                            const icon = sender.includes('facebook') ? getFacebookIcon() :
+                                        sender.includes('instagram') ? getInstagramIcon() :
+                                        getDefaultIcon();
+                            const time = new Date(email.createdAt).toLocaleString('bn-BD');
+
+                            newOtps.push(`
+                                <div class="otp-item" data-email-id="${email.id}">
+                                    <div class="otp-service">${icon} ${serviceName}</div>
+                                    <div class="otp-code">${otp}</div>
+                                    <button class="copy-btn">কপি করুন</button>
+                                    <div class="otp-time">${time}</div>
+                                </div>
+                            `);
+                        }
+                    }
+
+                    if (newOtps.length > 0) {
+                        emptyState.style.display = 'none';
+                        otpList.insertAdjacentHTML('afterbegin', newOtps.join(''));
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                } finally {
+                    isFetching = false;
+                }
+            }
+
+            function getFacebookIcon() { return `<svg class="service-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`; }
+            function getInstagramIcon() { return `<svg class="service-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.908.28 1.1 2.088 1.1 6.232c-.058 1.28-.072 1.689-.072 4.948 0 3.259.014 3.668.072 4.948.208 4.144 2.016 5.952 6.16 6.16.058.058 1.28.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.144-.208 5.952-2.016 6.16-6.16.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.668-.072-4.948-.208-4.144-2.016-5.952-6.16-6.16C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/></svg>`; }
+            function getDefaultIcon() { return `<svg class="service-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>`; }
+
+            function startAutoRefresh() {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(fetchEmails, 1500);
+            }
+
+            function stopAutoRefresh() {
+                if (intervalId) clearInterval(intervalId);
+            }
+
+            newEmailBtn.addEventListener('click', () => {
+                stopAutoRefresh();
+                generateNewEmail();
+            });
+
+            copyEmailBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(currentEmail.textContent).then(() => {
+                    const orig = copyEmailBtn.innerHTML;
+                    copyEmailBtn.innerHTML = 'কপিড!';
+                    setTimeout(() => copyEmailBtn.innerHTML = orig, 2000);
+                });
+            });
+
+            refreshBtn.addEventListener('click', fetchEmails);
+
+            document.addEventListener('click', e => {
+                if (e.target.classList.contains('copy-btn')) {
+                    const otp = e.target.parentElement.querySelector('.otp-code').textContent;
+                    navigator.clipboard.writeText(otp).then(() => {
+                        const orig = e.target.innerHTML;
+                        e.target.innerHTML = 'কপিড!';
+                        setTimeout(() => e.target.innerHTML = orig, 2000);
+                    });
+                }
+            });
+
+            loadSavedEmail();
+        });
+    </script>
+</body>
+</html>
