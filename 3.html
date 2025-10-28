@@ -92,7 +92,7 @@
     </div>
 
     <script>
-        // ১০টা API কী (আপনার দেওয়া)
+        // ১০টা API কী
         const API_KEYS = [
             "dafa36fb426f410b8fb4dba5bf9e8819e484758789e92da5777d31c71af1f695",
             "6efb934677437792414b72413f161016ba45b9aaf4eadc1a9e2bb85594f6d311",
@@ -107,7 +107,6 @@
         let currentKeyIndex = parseInt(localStorage.getItem('currentKeyIndex') || '0');
         const API_BASE = 'https://api.mailslurp.com';
 
-        // কারেন্ট কী + স্ট্যাটাস
         function getCurrentKey() {
             return API_KEYS[currentKeyIndex];
         }
@@ -132,22 +131,77 @@
 
             keyStatus.textContent = `কী ${currentKeyIndex + 1}/${API_KEYS.length} প্রস্তুত`;
 
+            // ওটিপি সংরক্ষণ
+            function saveOtps() {
+                const otps = [];
+                document.querySelectorAll('.otp-item').forEach(item => {
+                    otps.push(item.outerHTML);
+                });
+                localStorage.setItem('savedOtps', JSON.stringify(otps));
+            }
+
+            function loadOtps() {
+                const saved = localStorage.getItem('savedOtps');
+                if (saved) {
+                    const otps = JSON.parse(saved);
+                    otpList.innerHTML = otps.join('');
+                    emptyState.style.display = otps.length > 0 ? 'none' : 'block';
+                }
+            }
+
+            function clearOtps() {
+                otpList.innerHTML = '';
+                localStorage.removeItem('savedOtps');
+                emptyState.style.display = 'block';
+            }
+
             function loadSavedEmail() {
                 const savedEmail = localStorage.getItem('instantMail_email');
                 const savedInboxId = localStorage.getItem('instantMail_inboxId');
                 if (savedEmail && savedInboxId) {
                     currentEmail.textContent = savedEmail;
                     currentInboxId = savedInboxId;
+                    loadOtps();
                     startAutoRefresh();
                 } else {
                     generateNewEmail();
                 }
             }
 
-            function extractOTP(content) {
-                const otpRegex = /\b\d{4,6}\b/g;
-                const matches = content.match(otpRegex);
-                return matches ? matches[0] : null;
+            // নতুন ওটিপি এক্সট্রাক্ট ফাংশন (৬ ডিজিট সঠিক)
+            function extractOTP(rawContent) {
+                const content = rawContent.toLowerCase().replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+
+                const keywords = ['code', 'otp', 'verify', 'confirmation', 'security', 'কোড', 'ওটিপি', 'যাচাই'];
+                let candidates = [];
+
+                // কীওয়ার্ডের কাছাকাছি নাম্বার
+                for (const kw of keywords) {
+                    const regex = new RegExp(`(?:^|\\s)(${kw})[^\\d]*(\\d{4,6})|(\\d{4,6})[^\\d]*(${kw})(?:$|\\s)`, 'gi');
+                    let match;
+                    while ((match = regex.exec(content)) !== null) {
+                        const num = match[2] || match[3];
+                        if (num && /^\d{4,6}$/.test(num)) {
+                            candidates.push(num);
+                        }
+                    }
+                }
+
+                // সরাসরি ৬ ডিজিট
+                const direct = content.match(/\b\d{6}\b/g) || [];
+                candidates.push(...direct);
+
+                candidates = [...new Set(candidates)];
+
+                // ৬ ডিজিট > ৫ > ৪
+                const six = candidates.find(c => c.length === 6);
+                if (six) return six;
+                const five = candidates.find(c => c.length === 5);
+                if (five) return five;
+                const four = candidates.find(c => c.length === 4);
+                if (four) return four;
+
+                return null;
             }
 
             async function generateNewEmail() {
@@ -155,8 +209,7 @@
                 isFetching = true;
                 try {
                     currentEmail.textContent = 'তৈরি হচ্ছে...';
-                    otpList.innerHTML = '';
-                    emptyState.style.display = 'block';
+                    clearOtps();
 
                     const key = getCurrentKey();
                     const response = await fetch(`${API_BASE}/inboxes`, {
@@ -171,7 +224,7 @@
                         const err = await response.json();
                         if (err.message.includes('Rate limit') || err.message.includes('quota')) {
                             rotateKey();
-                            return generateNewEmail(); // রিট্রাই
+                            return generateNewEmail();
                         }
                         throw new Error(err.message || 'API Error');
                     }
@@ -183,7 +236,6 @@
                     localStorage.setItem('instantMail_email', data.emailAddress);
                     localStorage.setItem('instantMail_inboxId', data.id);
                     
-                    emptyState.style.display = 'block';
                     startAutoRefresh();
                 } catch (error) {
                     currentEmail.textContent = 'ত্রুটি: নতুন কী চেষ্টা করা হচ্ছে...';
@@ -213,32 +265,57 @@
                             headers: { 'x-api-key': key }
                         });
                         const bodyData = await bodyRes.json();
-                        const content = (bodyData.body || bodyData.bodyExcerpt || '').toLowerCase();
-                        const otp = extractOTP(content);
-                        if (otp) {
+                        const rawContent = (bodyData.body || bodyData.bodyExcerpt || '');
+                        const content = rawContent.toLowerCase();
+
+                        let otp = extractOTP(rawContent);
+
+                        // ফেসবুক/ইনস্টা স্পেশাল চেক
+                        if (!otp || otp.length < 6) {
+                            if (content.includes('facebook') || content.includes('fb')) {
+                                const fb = rawContent.match(/confirmation code[^0-9]*(\d{6})/i);
+                                if (fb) otp = fb[1];
+                            }
+                            if (content.includes('instagram')) {
+                                const ig = rawContent.match(/security code[^0-9]*(\d{6})/i);
+                                if (ig) otp = ig[1];
+                            }
+                        }
+
+                        if (otp && otp.length >= 4) {
                             const sender = email.from || 'অজানা';
-                            const serviceName = sender.includes('facebook') ? 'ফেসবুক' :
-                                               sender.includes('instagram') ? 'ইনস্টাগ্রাম' :
-                                               sender.split('@')[1]?.split('.')[0] || 'অজানা';
-                            const icon = sender.includes('facebook') ? getFacebookIcon() :
-                                        sender.includes('instagram') ? getInstagramIcon() :
-                                        getDefaultIcon();
+                            let serviceName = 'অজানা';
+                            let icon = getDefaultIcon();
+
+                            if (sender.toLowerCase().includes('facebook') || sender.toLowerCase().includes('fb')) {
+                                serviceName = 'ফেসবুক';
+                                icon = getFacebookIcon();
+                            } else if (sender.toLowerCase().includes('instagram') || sender.toLowerCase().includes('ig')) {
+                                serviceName = 'ইনস্টাগ্রাম';
+                                icon = getInstagramIcon();
+                            } else {
+                                const domain = sender.split('@')[1]?.split('.')[0];
+                                serviceName = domain ? domain.charAt(0).toUpperCase() + domain.slice(1) : 'অজানা';
+                            }
+
                             const time = new Date(email.createdAt).toLocaleString('bn-BD');
 
-                            newOtps.push(`
+                            const otpHtml = `
                                 <div class="otp-item" data-email-id="${email.id}">
                                     <div class="otp-service">${icon} ${serviceName}</div>
                                     <div class="otp-code">${otp}</div>
                                     <button class="copy-btn">কপি করুন</button>
                                     <div class="otp-time">${time}</div>
                                 </div>
-                            `);
+                            `;
+                            newOtps.push(otpHtml);
                         }
                     }
 
                     if (newOtps.length > 0) {
                         emptyState.style.display = 'none';
                         otpList.insertAdjacentHTML('afterbegin', newOtps.join(''));
+                        saveOtps();
                     }
                 } catch (error) {
                     console.error('Fetch error:', error);
@@ -247,9 +324,18 @@
                 }
             }
 
-            function getFacebookIcon() { return `<svg class="service-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`; }
-            function getInstagramIcon() { return `<svg class="service-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.908.28 1.1 2.088 1.1 6.232c-.058 1.28-.072 1.689-.072 4.948 0 3.259.014 3.668.072 4.948.208 4.144 2.016 5.952 6.16 6.16.058.058 1.28.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.144-.208 5.952-2.016 6.16-6.16.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.668-.072-4.948-.208-4.144-2.016-5.952-6.16-6.16C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/></svg>`; }
-            function getDefaultIcon() { return `<svg class="service-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>`; }
+            // আইকন ফাংশন
+            function getFacebookIcon() {
+                return `<svg class="service-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`;
+            }
+
+            function getInstagramIcon() {
+                return `<svg class="service-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.332.014 7.052.072 2.908.28 1.1 2.088 1.1 6.232c-.058 1.28-.072 1.689-.072 4.948 0 3.259.014 3.668.072 4.948.208 4.144 2.016 5.952 6.16 6.16.058.058 1.28.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.144-.208 5.952-2.016 6.16-6.16.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.668-.072-4.948-.208-4.144-2.016-5.952-6.16-6.16C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/></svg>`;
+            }
+
+            function getDefaultIcon() {
+                return `<svg class="service-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>`;
+            }
 
             function startAutoRefresh() {
                 if (intervalId) clearInterval(intervalId);
