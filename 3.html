@@ -149,6 +149,7 @@
                 }
             }
 
+            // শুধু নতুন ইমেইল ক্লিক করলে মুছে যাবে
             function clearOtps() {
                 otpList.innerHTML = '';
                 localStorage.removeItem('savedOtps');
@@ -161,8 +162,8 @@
                 if (savedEmail && savedInboxId) {
                     currentEmail.textContent = savedEmail;
                     currentInboxId = savedInboxId;
-                    loadOtps();
-                    startAutoRefresh();
+                    loadOtps(); // ওটিপি লোড করুন
+                    startAutoRefresh(); // রিফ্রেশ চালু
                 } else {
                     generateNewEmail();
                 }
@@ -175,7 +176,6 @@
                 const keywords = ['code', 'otp', 'verify', 'confirmation', 'security', 'কোড', 'ওটিপি', 'যাচাই'];
                 let candidates = [];
 
-                // কীওয়ার্ডের কাছাকাছি নাম্বার
                 for (const kw of keywords) {
                     const regex = new RegExp(`(?:^|\\s)(${kw})[^\\d]*(\\d{4,6})|(\\d{4,6})[^\\d]*(${kw})(?:$|\\s)`, 'gi');
                     let match;
@@ -187,13 +187,11 @@
                     }
                 }
 
-                // সরাসরি ৬ ডিজিট
                 const direct = content.match(/\b\d{6}\b/g) || [];
                 candidates.push(...direct);
 
                 candidates = [...new Set(candidates)];
 
-                // ৬ ডিজিট > ৫ > ৪
                 const six = candidates.find(c => c.length === 6);
                 if (six) return six;
                 const five = candidates.find(c => c.length === 5);
@@ -209,7 +207,7 @@
                 isFetching = true;
                 try {
                     currentEmail.textContent = 'তৈরি হচ্ছে...';
-                    clearOtps();
+                    clearOtps(); // নতুন ইমেইল → ওটিপি মুছুন
 
                     const key = getCurrentKey();
                     const response = await fetch(`${API_BASE}/inboxes`, {
@@ -270,7 +268,6 @@
 
                         let otp = extractOTP(rawContent);
 
-                        // ফেসবুক/ইনস্টা স্পেশাল চেক
                         if (!otp || otp.length < 6) {
                             if (content.includes('facebook') || content.includes('fb')) {
                                 const fb = rawContent.match(/confirmation code[^0-9]*(\d{6})/i);
@@ -315,7 +312,7 @@
                     if (newOtps.length > 0) {
                         emptyState.style.display = 'none';
                         otpList.insertAdjacentHTML('afterbegin', newOtps.join(''));
-                        saveOtps();
+                        saveOtps(); // প্রতিবার সেভ করুন
                     }
                 } catch (error) {
                     console.error('Fetch error:', error);
@@ -324,7 +321,6 @@
                 }
             }
 
-            // আইকন ফাংশন
             function getFacebookIcon() {
                 return `<svg class="service-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`;
             }
@@ -342,6 +338,7 @@
                 intervalId = setInterval(fetchEmails, 1500);
             }
 
+            // নতুন ইমেইল → ওটিপি মুছুন
             newEmailBtn.addEventListener('click', () => {
                 clearInterval(intervalId);
                 generateNewEmail();
