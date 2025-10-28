@@ -5,297 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ইন্সট্যান্ট মেইল - ওটিপি রিসিভার</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #ff3838 0%, #ff4757 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-        
-        .email-display {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .current-email {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ff4757;
-            margin-bottom: 15px;
-            word-break: break-all;
-        }
-        
-        /* বাটন লেআউট: মোবাইল অপটিমাইজড */
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .btn-row {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            gap: 10px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.95rem;
-            min-height: 44px; /* মোবাইল টাচ ফ্রেন্ডলি */
-        }
-        
-        .btn-primary {
-            background: #ff4757;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #ff3838;
-        }
-        
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-        
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-        
-        .btn-refresh {
-            background: #ffa502;
-            color: #333;
-            width: 110px;
-            font-size: 0.9rem;
-            padding: 10px 16px;
-            min-height: 44px;
-            border-radius: 8px;
-        }
-        
-        .btn-refresh:hover {
-            background: #ff9f43;
-        }
-        
-        .mailbox {
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            transition: opacity 0.2s ease;
-        }
-        
-        .mailbox-title {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #555;
-            font-size: 1.1rem;
-        }
-        
-        .otp-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #ff4757;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeInUp 0.3s ease forwards;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .otp-service {
-            font-weight: bold;
-            color: #ff4757;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .otp-code {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin: 10px 0;
-            letter-spacing: 3px;
-            text-align: center;
-        }
-        
-        .otp-time {
-            font-size: 0.8rem;
-            color: #777;
-            text-align: right;
-        }
-        
-        .copy-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin: 0 auto;
-            transition: background 0.3s ease;
-            min-height: 40px;
-        }
-        
-        .copy-btn:hover {
-            background: #218838;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: #777;
-        }
-        
-        .service-icon {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .telegram-section {
-            background: #f8f9fa;
-            padding: 25px 20px;
-            text-align: center;
-            border-top: 1px solid #eee;
-        }
-        
-        .telegram-title {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .telegram-btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: #0088cc;
-            color: white;
-            text-decoration: none;
-            font-size: 1.1rem;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 280px;
-            min-height: 50px;
-        }
-        
-        .telegram-btn:hover {
-            background: #0077b3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.3);
-        }
-        
-        .telegram-icon {
-            width: 28px;
-            height: 28px;
-            fill: #0088cc;
-            background: #ffffff;
-            border-radius: 50%;
-            padding: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        
-        /* শুধুমাত্র মোবাইল অপটিমাইজেশন — ডেস্কটপের জন্য কোনো মিডিয়া কোয়েরি নেই */
-        .btn-row {
-            flex-direction: row;
-            justify-content: space-between;
-        }
-        
-        .btn, .btn-refresh, .telegram-btn, .copy-btn {
-            touch-action: manipulation;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: #333; min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        .container { width: 100%; max-width: 500px; background: white; border-radius: 15px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #ff3838 0%, #ff4757 100%); color: white; padding: 25px; text-align: center; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { opacity: 0.9; font-size: 0.9rem; }
+        .email-display { padding: 20px; text-align: center; border-bottom: 1px solid #eee; }
+        .current-email { font-size: 1.2rem; font-weight: bold; color: #ff4757; margin-bottom: 15px; word-break: break-all; }
+        .btn-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .btn-row { display: flex; justify-content: space-between; width: 100%; gap: 10px; }
+        .btn { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem; min-height: 44px; }
+        .btn-primary { background: #ff4757; color: white; }
+        .btn-primary:hover { background: #ff3838; }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-refresh { background: #ffa502; color: #333; width: 110px; font-size: 0.9rem; padding: 10px 16px; min-height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-refresh:hover { background: #ff9f43; }
+        .icon { width: 18px; height: 18px; fill: currentColor; }
+        .mailbox { padding: 20px; max-height: 400px; overflow-y: auto; }
+        .mailbox-title { text-align: center; margin-bottom: 15px; color: #555; font-size: 1.1rem; }
+        .otp-item { background: #f8f9fa; border-radius: 10px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #ff4757; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); opacity: 0; transform: translateY(10px); animation: fadeInUp 0.3s ease forwards; }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .otp-service { font-weight: bold; color: #ff4757; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .otp-code { font-size: 1.8rem; font-weight: bold; color: #2c3e50; margin: 10px 0; letter-spacing: 3px; text-align: center; }
+        .otp-time { font-size: 0.8rem; color: #777; text-align: right; }
+        .copy-btn { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; margin: 0 auto; transition: background 0.3s ease; min-height: 40px; }
+        .copy-btn:hover { background: #218838; }
+        .empty-state { text-align: center; padding: 30px; color: #777; }
+        .service-icon { width: 20px; height: 20px; }
+        .telegram-section { background: #f8f9fa; padding: 25px 20px; text-align: center; border-top: 1px solid #eee; }
+        .telegram-title { font-size: 1.1rem; color: #555; margin-bottom: 15px; font-weight: 600; }
+        .telegram-btn { padding: 15px 25px; border: none; border-radius: 10px; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 12px; background: #0088cc; color: white; text-decoration: none; font-size: 1.1rem; margin: 0 auto; width: 100%; max-width: 280px; min-height: 50px; }
+        .telegram-btn:hover { background: #0077b3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.3); }
+        .telegram-icon { width: 28px; height: 28px; fill: #0088cc; background: #ffffff; border-radius: 50%; padding: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .key-status { font-size: 0.8rem; color: #28a745; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>𝗘𝗔𝗥𝗡𝗜𝗡𝗚 𝗕𝗬 𝗛𝗔𝗕𝗜𝗕</h1>
+            <h1>EARNING BY HABIB</h1>
             <p>ওটিপি রিসিভার - শুধুমাত্র ওটিপি কোড দেখুন</p>
         </div>
         
         <div class="email-display">
             <div class="current-email" id="currentEmail">লোডিং...</div>
+            <div class="key-status" id="keyStatus">কী লোড হচ্ছে...</div>
             
-            <!-- বাটন লেআউট: মোবাইল অপটিমাইজড -->
             <div class="btn-container">
                 <div class="btn-row">
                     <button class="btn btn-primary" id="newEmailBtn">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>
                         নতুন ইমেইল
                     </button>
                     <button class="btn btn-secondary" id="copyEmailBtn">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         ইমেইল কপি
                     </button>
                 </div>
                 <button class="btn btn-refresh" id="refreshBtn">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                     রিফ্রেশ
                 </button>
             </div>
@@ -322,8 +92,31 @@
     </div>
 
     <script>
-        const API_KEY = '7f29372c96cb4197738db42b62854fa18b93843205a89a98a0932b8329750374';
+        // ১০টা API কী (আপনার দেওয়া)
+        const API_KEYS = [
+            "dafa36fb426f410b8fb4dba5bf9e8819e484758789e92da5777d31c71af1f695",
+            "6efb934677437792414b72413f161016ba45b9aaf4eadc1a9e2bb85594f6d311",
+            "dd1cd61ea0f26fb7a1ce5b944442fc75bcb3f9b5f6ff411373b34b571e502ace",
+            "60d936b105c297998f72d264aa61d14ea0d6afb00cd9f4ba98c6c9b361da755d",
+            "83723ae746570ffdc03e417a502d01932a83044a1232c6d0997ee8996f9343da",
+            "b8b73e45c604f398cdf82ea61f198343e19224b313a43eb315ddf278cfd5f647",
+            "1049dde0171122c4afc5ff1cdd3fa7e7001e802eba5e5958ddc6af7ddfddd33b",
+            "14a7db512a2ab63a82dbe9ff254d8cb4ee4bc61aeea12db458f521bc2930e599",
+            "786d2a186ad2444a4cfc00566207bb48ecd46b5254b1bd943f0d043b70f3361f"
+        ];
+        let currentKeyIndex = parseInt(localStorage.getItem('currentKeyIndex') || '0');
         const API_BASE = 'https://api.mailslurp.com';
+
+        // কারেন্ট কী + স্ট্যাটাস
+        function getCurrentKey() {
+            return API_KEYS[currentKeyIndex];
+        }
+
+        function rotateKey() {
+            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+            localStorage.setItem('currentKeyIndex', currentKeyIndex);
+            document.getElementById('keyStatus').textContent = `কী ${currentKeyIndex + 1}/${API_KEYS.length} ব্যবহৃত হচ্ছে`;
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const newEmailBtn = document.getElementById('newEmailBtn');
@@ -332,14 +125,16 @@
             const currentEmail = document.getElementById('currentEmail');
             const otpList = document.getElementById('otpList');
             const emptyState = document.getElementById('emptyState');
+            const keyStatus = document.getElementById('keyStatus');
             let currentInboxId = null;
             let intervalId = null;
             let isFetching = false;
 
+            keyStatus.textContent = `কী ${currentKeyIndex + 1}/${API_KEYS.length} প্রস্তুত`;
+
             function loadSavedEmail() {
                 const savedEmail = localStorage.getItem('instantMail_email');
                 const savedInboxId = localStorage.getItem('instantMail_inboxId');
-                
                 if (savedEmail && savedInboxId) {
                     currentEmail.textContent = savedEmail;
                     currentInboxId = savedInboxId;
@@ -363,16 +158,25 @@
                     otpList.innerHTML = '';
                     emptyState.style.display = 'block';
 
+                    const key = getCurrentKey();
                     const response = await fetch(`${API_BASE}/inboxes`, {
                         method: 'POST',
                         headers: {
-                            'x-api-key': API_KEY,
+                            'x-api-key': key,
                             'Content-Type': 'application/json'
                         }
                     });
-                    if (!response.ok) throw new Error('API Error');
-                    const data = await response.json();
 
+                    if (!response.ok) {
+                        const err = await response.json();
+                        if (err.message.includes('Rate limit') || err.message.includes('quota')) {
+                            rotateKey();
+                            return generateNewEmail(); // রিট্রাই
+                        }
+                        throw new Error(err.message || 'API Error');
+                    }
+
+                    const data = await response.json();
                     currentInboxId = data.id;
                     currentEmail.textContent = data.emailAddress;
                     
@@ -382,8 +186,9 @@
                     emptyState.style.display = 'block';
                     startAutoRefresh();
                 } catch (error) {
-                    currentEmail.textContent = 'ত্রুটি: পুনরায় চেষ্টা করুন';
-                    console.error(error);
+                    currentEmail.textContent = 'ত্রুটি: নতুন কী চেষ্টা করা হচ্ছে...';
+                    rotateKey();
+                    setTimeout(generateNewEmail, 1000);
                 } finally {
                     isFetching = false;
                 }
@@ -392,10 +197,10 @@
             async function fetchEmails() {
                 if (!currentInboxId || isFetching) return;
                 isFetching = true;
-
                 try {
+                    const key = getCurrentKey();
                     const response = await fetch(`${API_BASE}/inboxes/${currentInboxId}/emails?unreadOnly=true`, {
-                        headers: { 'x-api-key': API_KEY }
+                        headers: { 'x-api-key': key }
                     });
                     if (!response.ok) return;
                     const emails = await response.json();
@@ -405,7 +210,7 @@
                         if (document.querySelector(`[data-email-id="${email.id}"]`)) continue;
 
                         const bodyRes = await fetch(`${API_BASE}/emails/${email.id}`, {
-                            headers: { 'x-api-key': API_KEY }
+                            headers: { 'x-api-key': key }
                         });
                         const bodyData = await bodyRes.json();
                         const content = (bodyData.body || bodyData.bodyExcerpt || '').toLowerCase();
@@ -451,12 +256,8 @@
                 intervalId = setInterval(fetchEmails, 1500);
             }
 
-            function stopAutoRefresh() {
-                if (intervalId) clearInterval(intervalId);
-            }
-
             newEmailBtn.addEventListener('click', () => {
-                stopAutoRefresh();
+                clearInterval(intervalId);
                 generateNewEmail();
             });
 
